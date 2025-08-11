@@ -31,7 +31,7 @@ const carouselSlides: CarouselSlide[] = [
       "Our wedding cakes are more than dessert; they're a centerpiece of your celebration, baked with love and designed to perfection. Let us create a masterpiece for your special day.",
     image: "/cakes/wed.jpg",
     cta: {
-      primary: { text: "Explore Wedding Cakes", href: "/cakes/wedding" },
+      primary: { text: "Explore Wedding Cakes", href: "/gallery" },
       secondary: { text: "Book a Consultation", href: "/contact" },
     },
     icon: <Heart className="h-8 w-8" />,

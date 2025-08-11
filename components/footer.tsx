@@ -77,27 +77,27 @@ export default function Footer() {
             <h3 className="text-lg font-bold mb-4 text-dadda-green">Our Specialties</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/cakes/wedding" className="text-gray-300 hover:text-dadda-green transition-colors">
+                <Link href="/gallery" className="text-gray-300 hover:text-dadda-green transition-colors">
                   Wedding Cakes
                 </Link>
               </li>
               <li>
-                <Link href="/cakes/birthday" className="text-gray-300 hover:text-dadda-green transition-colors">
+                <Link href="/gallery" className="text-gray-300 hover:text-dadda-green transition-colors">
                   Birthday Cakes
                 </Link>
               </li>
               <li>
-                <Link href="/cakes/anniversary" className="text-gray-300 hover:text-dadda-green transition-colors">
+                <Link href="/gallery" className="text-gray-300 hover:text-dadda-green transition-colors">
                   Anniversary Cakes
                 </Link>
               </li>
               <li>
-                <Link href="/cakes/children" className="text-gray-300 hover:text-dadda-green transition-colors">
+                <Link href="/gallery" className="text-gray-300 hover:text-dadda-green transition-colors">
                   Children's Cakes
                 </Link>
               </li>
               <li>
-                <Link href="/cakes/corporate" className="text-gray-300 hover:text-dadda-green transition-colors">
+                <Link href="/gallery" className="text-gray-300 hover:text-dadda-green transition-colors">
                   Corporate Cakes
                 </Link>
               </li>
@@ -132,7 +132,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-gray-700 mt-12 pt-8 text-center text-sm text-gray-400">
-          <p>© {new Date().getFullYear()} Dadda's Confectionery. All rights reserved. Baked with Love.</p>
+          <p> {new Date().getFullYear()} Dadda's Confectionery. All rights reserved. Baked with Love.</p>
         </div>
       </div>
     </footer>
