@@ -15,11 +15,11 @@ export default function FeaturedCakeCard({ title, description, image, category, 
 
   if (!cakeImage) {
     if (category === "Wedding") {
-      cakeImage = "/images/generated/image2.jpg"
+      cakeImage = "/cakes/cake2.jpg"
     } else if (category === "Birthday") {
-      cakeImage = "/images/generated/image4.jpg"
+      cakeImage = "/cakes/cake9.jpg"
     } else if (category === "Children's Party") {
-      cakeImage = "/images/generated/image5.jpg"
+      cakeImage = "/cakes/cake1.jpg"
     } else {
       cakeImage = "/featured-cake.png" // Fallback placeholder
     }
