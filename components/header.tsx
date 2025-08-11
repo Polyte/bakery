@@ -79,12 +79,12 @@ export default function Header() {
             >
             Our Gallery
             </Link>
-            <Link
+            {/* <Link
               href="/cakes"
               className={`font-medium transition-colors duration-300 ${solidHeader ? "text-brown-dark hover:text-dadda-primary" : "text-white hover:text-dadda-primary"}`}
             >
               Our Cakes
-            </Link>
+            </Link> */}
             <Link href="/order" className="btn-primary">
               Order Now
             </Link>
