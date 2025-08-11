@@ -18,11 +18,41 @@ export default function ContactPage() {
     message: "",
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [status, setStatus] = useState<null | { ok: boolean; msg: string }>(null)
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle form submission here
-    console.log("Form submitted:", formData)
-    alert("Thank you for your inquiry! We'll get back to you within 24 hours.")
+    setStatus(null)
+    setIsSubmitting(true)
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      })
+      const data = await res.json()
+      if (!res.ok || !data?.ok) {
+        throw new Error(data?.error || "Failed to send message")
+      }
+      setStatus({ ok: true, msg: "Thank you! Your inquiry was sent successfully." })
+      // Optionally clear form
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        eventType: "",
+        eventDate: "",
+        guestCount: "",
+        cakeType: "",
+        budget: "",
+        message: "",
+      })
+    } catch (err: any) {
+      setStatus({ ok: false, msg: err?.message || "Something went wrong. Please try again." })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -201,9 +231,23 @@ export default function ContactPage() {
                   ></textarea>
                 </div>
 
-                <button type="submit" className="w-full btn-primary flex items-center justify-center">
+                {status && (
+                  <div
+                    className={`rounded-lg px-4 py-3 text-sm ${
+                      status.ok ? "bg-green-50 text-green-700 border border-green-200" : "bg-red-50 text-red-700 border border-red-200"
+                    }`}
+                  >
+                    {status.msg}
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className={`w-full btn-primary flex items-center justify-center disabled:opacity-60 disabled:cursor-not-allowed`}
+                >
                   <Send className="mr-2 h-5 w-5" />
-                  Send Inquiry
+                  {isSubmitting ? "Sending..." : "Send Inquiry"}
                 </button>
               </form>
             </div>
