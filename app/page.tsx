@@ -25,31 +25,31 @@ export default function Home() {
             <EventCategoryCard
               title="Wedding"
               image="/cakes/wedding.jpg"
-              href="/cakes/wedding"
+              href="/gallery"
               icon={<Heart className="h-6 w-6" />}
             />
             <EventCategoryCard
               title="Birthday"
-              image="/hero/image5.jpg"
-              href="/cakes/birthday"
+              image="/cakes/cake9.jpg"
+              href="/gallery"
               icon={<Cake className="h-6 w-6" />}
             />
             <EventCategoryCard
               title="Anniversary"
-              image="/hero/image7.jpg"
-              href="/cakes/anniversary"
+              image="/cakes/cake1.jpg"
+              href="/gallery"
               icon={<Gift className="h-6 w-6" />}
             />
             <EventCategoryCard
               title="Children's Party"
-              image="/hero/image6.jpg"
-              href="/cakes/children"
+              image="/cakes/cake1.jpg"
+              href="/gallery"
               icon={<Users className="h-6 w-6" />}
             />
             <EventCategoryCard
               title="Corporate Events"
               image="/cakes/cake23.jpg"
-              href="/cakes/corporate"
+              href="/gallery"
               icon={<Users className="h-6 w-6" />}
             />
           </div>
@@ -68,7 +68,7 @@ export default function Home() {
             <FeaturedCakeCard
               title="Garden Rose Wedding Cake"
               description="Three-tier vanilla sponge with buttercream roses and delicate sugar flowers."
-              image="/hero/Image9.jpg"
+              image="/cakes/cake2.jpg"
               category="Wedding"
               price="From R3800"
               href="/cakes/wedding/garden-rose"
@@ -76,7 +76,7 @@ export default function Home() {
             <FeaturedCakeCard
               title="Chocolate Cherry Delight"
               description="Rich chocolate cake with fresh cherries and ganache drip, topped with a signature cherry."
-              image="/hero/Image2.jpg"
+              image="/cakes/cake9.jpg"
               category="Birthday"
               price="From R850"
               href="/cakes/birthday/chocolate-cherry"
@@ -84,7 +84,7 @@ export default function Home() {
             <FeaturedCakeCard
               title="Enchanted Castle Cake"
               description="Magical castle cake with turrets and flags, perfect for little princesses and princes."
-              image="/hero/Image3.jpg"
+              image="/cakes/cake1.jpg"
               category="Children's Party"
               price="From R1200"
               href="/cakes/children/enchanted-castle"
@@ -105,7 +105,7 @@ export default function Home() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="relative h-[400px] md:h-[500px] rounded-2xl overflow-hidden">
               <LazyImage
-                src="/hero/Image10.jpg"
+                src="/cakes/cake10.jpg"
                 alt="About Dadda's Confectionery"
                 fill
                 className="object-cover"
@@ -143,21 +143,21 @@ export default function Home() {
             <TestimonialCard
               name="Sarah & Michael Johnson"
               role="Wedding Couple"
-              image="/happy-couple-park.png"
+              image="/cakes/happy-couple-park.png"
               rating={5}
               testimonial="Our wedding cake from Dadda's was absolutely perfect! Not only was it the most beautiful cake we'd ever seen, but it tasted incredible. Every guest asked where we got it. Thank you for making our day so special!"
             />
             <TestimonialCard
               name="Maria Rodriguez"
               role="Mother"
-              image="/smiling-mother.png"
+              image="/cakes/smiling-mother.png"
               rating={5}
               testimonial="The princess castle cake for my daughter's 6th birthday was magical! The attention to detail was amazing, and my little girl's face lit up when she saw it. Dadda's truly bakes with love."
             />
             <TestimonialCard
               name="James Thompson"
               role="Corporate Client"
-              image="/professional-client.png"
+              image="/cakes/professional-client.png"
               rating={5}
               testimonial="We've been ordering from Dadda's for all our corporate events for three years now. Their professionalism, quality, and reliability are unmatched. They always deliver exactly what we need, when we need it."
             />
