@@ -326,8 +326,9 @@ export default function ContactPage() {
               </div>
 
               <div className="relative h-64 rounded-2xl overflow-hidden"> 
+             <p className="text-2xl font-bold mb-4 text-brown-dark">Visit Our Bakery</p>
               <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3436.7833614499623!2d28.087341075204066!3d-25.671944077408362!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1ebfd74a6f3d5897%3A0x60c92cf996fd6970!2s2337%2C%206814%20Strawberry%20St%2C%20Hartebeesthoek%20303-Jr%2C%20Akasia%2C%200182!5e1!3m2!1sen!2sza!4v1754910175891!5m2!1sen!2sza" width="600" height="450" className="w-full h-full"  loading="lazy" ></iframe>
-              </div>
+               </div>
             </div>
           </div>
         </div>

@@ -132,7 +132,7 @@ export default function Header() {
               className="block text-brown-dark hover:text-dadda-primary font-medium py-2 transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
-              Contact Us
+              Contact Us 
             </Link>
             <Link href="/order" className="btn-primary text-center block mt-4" onClick={() => setIsMenuOpen(false)}>
               Order Now
