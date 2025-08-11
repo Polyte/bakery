@@ -207,11 +207,11 @@ export default function ContactPage() {
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dadda-green focus:border-transparent"
                     >
                       <option value="">Select Budget Range</option>
-                      <option value="under-100">Under $100</option>
-                      <option value="100-200">$100 - $200</option>
-                      <option value="200-400">$200 - $400</option>
-                      <option value="400-600">$400 - $600</option>
-                      <option value="over-600">Over $600</option>
+                      <option value="under-100">Under R100</option>
+                      <option value="100-200">R1000 - R2000</option>
+                      <option value="200-400">R300 - R4000</option>
+                      <option value="400-600">R4000 - R6000</option>
+                      <option value="over-600">Over R6000</option>
                     </select>
                   </div>
                 </div>
@@ -261,15 +261,15 @@ export default function ContactPage() {
                     <MapPin className="h-6 w-6 text-dadda-red mr-3 mt-1" />
                     <div>
                       <h4 className="font-bold text-brown-dark">Visit Our Bakery</h4>
-                      <p className="text-brown-medium">123 Sweet Street, Confectionery Lane, CL1 2CD</p>
+                      <p className="text-brown-medium">6814 Strawberry Street, Unit 2337 Villa Lanta Estate, Amandasig, 0182</p>
                     </div>
                   </div>
                   <div className="flex items-center">
                     <Phone className="h-6 w-6 text-dadda-red mr-3" />
                     <div>
                       <h4 className="font-bold text-brown-dark">Call Us</h4>
-                      <a href="tel:+1234567890" className="text-brown-medium hover:text-dadda-green">
-                        (123) 456-7890
+                      <a href="tel:++27 76 219 6675" className="text-brown-medium hover:text-dadda-green">
+                      +27 76 219 6675
                       </a>
                     </div>
                   </div>
@@ -281,7 +281,7 @@ export default function ContactPage() {
                         href="mailto:info@daddasconfectionery.com"
                         className="text-brown-medium hover:text-dadda-green"
                       >
-                        info@daddasconfectionery.com
+                        info@daddasconfectionery.co.za
                       </a>
                     </div>
                   </div>
@@ -325,13 +325,8 @@ export default function ContactPage() {
                 </ul>
               </div>
 
-              <div className="relative h-64 rounded-2xl overflow-hidden">
-                <LazyImage
-                  src="/images/generated/storefront.png"
-                  alt="Dadda's Confectionery Storefront"
-                  fill
-                  className="object-cover"
-                />
+              <div className="relative h-64 rounded-2xl overflow-hidden"> 
+              <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3436.7833614499623!2d28.087341075204066!3d-25.671944077408362!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1ebfd74a6f3d5897%3A0x60c92cf996fd6970!2s2337%2C%206814%20Strawberry%20St%2C%20Hartebeesthoek%20303-Jr%2C%20Akasia%2C%200182!5e1!3m2!1sen!2sza!4v1754910175891!5m2!1sen!2sza" width="600" height="450" className="w-full h-full"  loading="lazy" ></iframe>
               </div>
             </div>
           </div>

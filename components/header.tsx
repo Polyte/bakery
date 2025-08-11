@@ -79,12 +79,12 @@ export default function Header() {
             >
             Our Gallery
             </Link>
-            {/* <Link
-              href="/cakes"
+            { <Link
+              href="/contact"
               className={`font-medium transition-colors duration-300 ${solidHeader ? "text-brown-dark hover:text-dadda-primary" : "text-white hover:text-dadda-primary"}`}
             >
-              Our Cakes
-            </Link> */}
+              Contact Us
+            </Link> }
             <Link href="/order" className="btn-primary">
               Order Now
             </Link>
@@ -113,11 +113,11 @@ export default function Header() {
               Home
             </Link>
             <Link
-              href="/cakes"
+              href="/about"
               className="block text-brown-dark hover:text-dadda-primary font-medium py-2 transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
-              Our Cakes
+              About Us
             </Link>
             <Link
               href="/gallery"
@@ -126,19 +126,13 @@ export default function Header() {
             >
               Gallery
             </Link>
+           
             <Link
-              href="/about"
+              href="/contact"
               className="block text-brown-dark hover:text-dadda-primary font-medium py-2 transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
-              About Us
-            </Link>
-            <Link
-              href="/cakes"
-              className="block text-brown-dark hover:text-dadda-primary font-medium py-2 transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Our Cakes
+              Contact Us
             </Link>
             <Link href="/order" className="btn-primary text-center block mt-4" onClick={() => setIsMenuOpen(false)}>
               Order Now
