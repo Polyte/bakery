@@ -1,0 +1,17 @@
+{
+  "node": {
+    "409334b239c9076e536879af885a86ed5f578379aa": {
+      "workers": {
+        "app/order/page": {
+          "moduleId": "(action-browser)/./node_modules/.pnpm/next@15.2.4_react-dom@19.1.0_react@19.1.0__react@19.1.0/node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fpolyteme%2Fbakery%2Fapp%2Forder%2Faction.ts%22%2C%5B%7B%22id%22%3A%22409334b239c9076e536879af885a86ed5f578379aa%22%2C%22exportedName%22%3A%22submitOrder%22%7D%5D%5D%5D&__client_imported__=true!",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/order/page": "action-browser"
+      }
+    }
+  },
+  "edge": {},
+  "encryptionKey": "WMbuUocGhI+UnLtcwtpaJZMSCmWnfIbmihM2oy+t/kM="
+}
