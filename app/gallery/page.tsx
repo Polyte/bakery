@@ -1,11 +1,14 @@
-"use client"
+import fs from "fs"
+import path from "path"
+import type { Metadata } from "next"
+import GalleryClient from "./GalleryClient"
 
-import Link from "next/link"
-import { useState } from "react"
-import LazyImage from '@/components/lazy-image'
+export const metadata: Metadata = {
+  title: "Our Cake Gallery",
+}
 
-// Enhanced gallery data using the new high-quality images
-const galleryItems = [
+// Curated base items (kept from previous implementation)
+const curatedItems = [
   {
     id: 1,
     title: "Elegant Wedding Creation",
@@ -23,7 +26,7 @@ const galleryItems = [
   {
     id: 3,
     title: "Classic Scones for Tea Time",
-    category: "Pastries", // New category for gallery
+    category: "Pastries",
     image: "/cakes/cake18.jpg",
     description: "Warm, freshly baked scones served with cream and jam.",
   },
@@ -37,7 +40,7 @@ const galleryItems = [
   {
     id: 5,
     title: "Dadda's Signature Chocolate Cake",
-    category: "Signature", // New category for gallery
+    category: "Signature",
     image: "/cakes/cake5.jpg",
     description: "Our famous rich and decadent chocolate layer cake.",
   },
@@ -92,144 +95,53 @@ const galleryItems = [
   },
 ]
 
-// Available filters
-const categories = [
-  "All",
-  "Wedding",
-  "Birthday",
-  "Anniversary",
-  "Children's Party",
-  "Corporate Events",
-  "Pastries",
-  "Signature",
-]
+function toTitle(name: string) {
+  const base = name.replace(/\.[^/.]+$/, "").replace(/[._-]+/g, " ")
+  return base
+    .split(" ")
+    .filter(Boolean)
+    .map((w) => w[0]?.toUpperCase() + w.slice(1))
+    .join(" ")
+}
 
-export default function GalleryPage() {
-  const [selectedCategory, setSelectedCategory] = useState("All")
-  const [selectedImage, setSelectedImage] = useState<number | null>(null)
+export default async function GalleryPage() {
+  const cakesDir = path.join(process.cwd(), "public", "cakes")
+  let dynamicItems: {
+    id: number
+    title: string
+    category: string
+    image: string
+    description: string
+  }[] = []
 
-  // Filter gallery items based on selected category
-  const filteredItems =
-    selectedCategory === "All" ? galleryItems : galleryItems.filter((item) => item.category === selectedCategory)
+  try {
+    const files = fs.readdirSync(cakesDir)
+    const allowed = new Set([".jpg", ".jpeg", ".png", ".webp", ".gif"]) // include common formats
+    const startId = curatedItems.length + 1
 
-  // Handle opening the modal
-  const openModal = (id: number) => {
-    setSelectedImage(id)
-    document.body.style.overflow = "hidden"
+    dynamicItems = files
+      .filter((f) => allowed.has(path.extname(f).toLowerCase()))
+      .map((file, idx) => ({
+        id: startId + idx,
+        title: toTitle(file),
+        category: "Gallery",
+        image: `/cakes/${file}`,
+        description: "From our cakes collection.",
+      }))
+  } catch (e) {
+    // If the directory doesn't exist or reading fails, proceed with curated only
+    dynamicItems = []
   }
 
-  // Handle closing the modal
-  const closeModal = () => {
-    setSelectedImage(null)
-    document.body.style.overflow = "auto"
-  }
+  // Merge curated with dynamic, preferring unique images
+  const seen = new Set<string>()
+  const allItems = [...curatedItems, ...dynamicItems].filter((it) => {
+    if (seen.has(it.image)) return false
+    seen.add(it.image)
+    return true
+  })
 
-  // Get the selected image data
-  const selectedImageData = selectedImage !== null ? galleryItems.find((item) => item.id === selectedImage) : null
+  const categories = Array.from(new Set(["All", ...allItems.map((i) => i.category)]))
 
-  return (
-    <>
-      {/* Page Header */}
-      <section className="pt-32 pb-16 bg-dadda-green-light">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Our Cake Gallery</h1>
-          <p className="text-xl max-w-2xl mx-auto">
-            Browse our portfolio of custom cake creations and confections for various events and celebrations.
-          </p>
-        </div>
-      </section>
-
-      {/* Gallery Section */}
-      <section className="py-16 bg-cream">
-        <div className="container mx-auto px-4">
-          {/* Category Filters */}
-          <div className="flex flex-wrap justify-center gap-4 mb-12">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`px-6 py-3 rounded-full transition-all duration-300 font-medium ${
-                  selectedCategory === category
-                    ? "bg-dadda-green text-brown-dark shadow-lg"
-                    : "bg-white text-brown-dark hover:bg-dadda-green-light border border-dadda-green"
-                }`}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
-
-          {/* Gallery Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {filteredItems.map((item) => (
-              <div
-                key={item.id}
-                className="relative aspect-square overflow-hidden rounded-xl cursor-pointer group"
-                onClick={() => openModal(item.id)}
-              >
-                <LazyImage
-                  src={item.image || "/placeholder.svg"}
-                  alt={item.title}
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                  <div className="text-">
-                    <h3 className="font-bold text-lg mb-1">{item.title}</h3>
-                    <p className="text-sm text-dadda-green-light">{item.category}</p>
-                    <p className="text-xs mt-2 opacity-90">{item.description}</p>
-                  </div>
-                </div>
-                {/* Category Badge */}
-                <div className="absolute top-3 left-3 bg-dadda-green text-white text-xs font-medium py-1 px-3 rounded-full">
-                  {item.category}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Enhanced Image Modal */}
-      {selectedImage !== null && selectedImageData && (
-        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4" onClick={closeModal}>
-          <div className="relative max-w-5xl w-full" onClick={(e) => e.stopPropagation()}>
-            <button
-              className="absolute -top-12 right-0 text-white text-xl font-bold hover:text-dadda-green transition-colors"
-              onClick={closeModal}
-            >
-              Close ×
-            </button>
-            <div className="bg-white rounded-2xl overflow-hidden shadow-2xl">
-              <div className="relative aspect-[4/3]">
-                <LazyImage
-                  src={selectedImageData.image || "/placeholder.svg"}
-                  alt={selectedImageData.title}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-2xl font-bold text-brown-dark">{selectedImageData.title}</h3>
-                  <span className="bg-dadda-green text-white text-sm font-medium py-1 px-3 rounded-full">
-                    {selectedImageData.category}
-                  </span>
-                </div>
-                <p className="text-brown-medium text-lg">{selectedImageData.description}</p>
-                <div className="mt-4 flex gap-3">
-                  <Link href="/order" className="btn-primary" onClick={closeModal}>
-                    Order Similar
-                  </Link>
-                  <Link href="/cakes" className="btn-secondary" onClick={closeModal}>
-                    View More
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
-  )
+  return <GalleryClient items={allItems} categories={categories} />
 }

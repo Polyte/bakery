@@ -42,7 +42,7 @@ export default function Home() {
             />
             <EventCategoryCard
               title="Children's Party"
-              image="/cakes/cake1.jpg"
+              image="/cakes/cake17.jpg"
               href="/gallery"
               icon={<Users className="h-6 w-6" />}
             />
@@ -68,10 +68,10 @@ export default function Home() {
             <FeaturedCakeCard
               title="Garden Rose Wedding Cake"
               description="Three-tier vanilla sponge with buttercream roses and delicate sugar flowers."
-              image="/cakes/cake2.jpg"
+              image="/cakes/cake21.jpg"
               category="Wedding"
               price="From R3800"
-              href="/cakes/wedding/garden-rose"
+              href="/gallery"
             />
             <FeaturedCakeCard
               title="Chocolate Cherry Delight"
@@ -79,20 +79,20 @@ export default function Home() {
               image="/cakes/cake9.jpg"
               category="Birthday"
               price="From R850"
-              href="/cakes/birthday/chocolate-cherry"
+              href="/gallery"
             />
             <FeaturedCakeCard
               title="Enchanted Castle Cake"
               description="Magical castle cake with turrets and flags, perfect for little princesses and princes."
-              image="/cakes/cake1.jpg"
+              image="/cakes/cake25.jpg"
               category="Children's Party"
               price="From R1200"
-              href="/cakes/children/enchanted-castle"
+              href="/gallery"
             />
           </div>
 
           <div className="text-center mt-12">
-            <Link href="/cakes" className="btn-primary inline-flex items-center">
+            <Link href="/gallery" className="btn-primary inline-flex items-center">
               View All Cakes <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </div>
@@ -105,7 +105,7 @@ export default function Home() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="relative h-[400px] md:h-[500px] rounded-2xl overflow-hidden">
               <LazyImage
-                src="/cakes/cake10.jpg"
+                src="/images/company-profile-5.png"
                 alt="About Dadda's Confectionery"
                 fill
                 className="object-cover"

@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   title: "Dadda's Confectionery | Baked with Love",
   description:
     "Artisanal custom cakes and confections baked with love. Specializing in wedding cakes, birthday cakes, and custom desserts for all occasions in Pretoria, South Africa.",
-    
+  
 }
 
 export default function RootLayout({
