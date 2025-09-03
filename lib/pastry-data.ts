@@ -2,6 +2,7 @@ import type { PastryCategory } from "./order-types"
 
 export const pastryCategories: PastryCategory[] = [
   {
+    
     id: "cake",
     name: "Cakes",
     basePrice: 3500,

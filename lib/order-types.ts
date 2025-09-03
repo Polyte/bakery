@@ -13,6 +13,7 @@ export interface PastryCategory {
   fillings?: PastryOption[]
   frostings?: PastryOption[]
   decorations?: PastryOption[]
+  colours?: PastryOption[]
   quantityMultipliers?: {
     [key: number]: number // e.g. { 6: 1, 12: 0.95 } for discount
   }
