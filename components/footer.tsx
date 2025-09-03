@@ -44,11 +44,7 @@ export default function Footer() {
           <div>
             <h3 className="text-lg font-bold mb-4 text-dadda-green">Quick Links</h3>
             <ul className="space-y-2">
-              <li>
-                <Link href="/cakes" className="text-gray-300 hover:text-dadda-green transition-colors">
-                  Our Cakes
-                </Link>
-              </li>
+             
               <li>
                 <Link href="/gallery" className="text-gray-300 hover:text-dadda-green transition-colors">
                   Gallery
@@ -59,14 +55,10 @@ export default function Footer() {
                   About Us
                 </Link>
               </li>
-              <li>
-                <Link href="/blog" className="text-gray-300 hover:text-dadda-green transition-colors">
-                  Blog
-                </Link>
-              </li>
+             
               <li>
                 <Link href="/contact" className="text-gray-300 hover:text-dadda-green transition-colors">
-                  Contact
+                  Contact Us
                 </Link>
               </li>
             </ul>
