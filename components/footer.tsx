@@ -102,7 +102,7 @@ export default function Footer() {
             <ul className="space-y-4">
               <li className="flex items-start">
                 <MapPin className="h-5 w-5 text-dadda-red mr-2 mt-0.5" />
-                <span className="text-gray-300">6814 Strawberry Street, Unit 2337 Villa Lanta Estate, Amandasig, 0182</span>
+                <span className="text-gray-300"><a href="https://www.google.com/maps/place/2337,+6814+Strawberry+St,+Hartebeesthoek+303-Jr,+Akasia,+0182/@-25.6719441,28.0873411,1103m/data=!3m2!1e3!4b1!4m5!3m4!1s0x1ebfd74a6f3d5897:0x60c92cf996fd6970!8m2!3d-25.6719441!4d28.089916?entry=ttu&g_ep=EgoyMDI1MDgzMC4wIKXMDSoASAFQAw%3D%3D">6814 Strawberry Street, Unit 2337 Villa Lanta Estate, Amandasig, 0182</a></span>
               </li>
               <li className="flex items-center">
                 <Phone className="h-5 w-5 text-dadda-red mr-2" />
