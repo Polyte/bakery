@@ -2,14 +2,7 @@ import { UserRole, type Prisma } from "@prisma/client"
 import { prisma } from "@/lib/db"
 
 export { ORDER_STATUS_LABELS, BOARD_COLUMNS } from "@/lib/admin/labels"
-
-export type AdminSession = {
-  id: string
-  email: string
-  firstName: string
-  lastName: string
-  role: UserRole
-}
+export type { AdminSession } from "@/lib/admin/types"
 
 const STAFF_ROLES: UserRole[] = [
   UserRole.SUPER_ADMIN,

@@ -4,7 +4,8 @@ import { cookies } from "next/headers"
 import { NextResponse } from "next/server"
 import { UserRole } from "@prisma/client"
 import { prisma } from "@/lib/db"
-import { isStaffRole, type AdminSession } from "@/lib/admin/domain"
+import { isStaffRole } from "@/lib/admin/domain"
+import type { AdminSession } from "@/lib/admin/types"
 
 export const ADMIN_COOKIE = "dadda_admin_session"
 export const ADMIN_MAX_AGE = 60 * 60 * 24 * 7 // 7 days

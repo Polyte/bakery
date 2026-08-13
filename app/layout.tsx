@@ -1,7 +1,6 @@
 import type React from "react"
 import type { Metadata, Viewport } from "next"
 import { headers } from "next/headers"
-import { Playfair_Display, Montserrat } from "next/font/google"
 import "./globals.css"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
@@ -10,21 +9,6 @@ import PageAnimations from "@/components/page-animations"
 import { CakeOrderProvider } from "@/components/cake-order-provider"
 import JsonLd from "@/components/json-ld"
 import { bakeryJsonLd, pageMetadata, PAGES, SITE, websiteJsonLd } from "@/lib/seo"
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["400", "600", "700"],
-  style: ["normal", "italic"],
-  variable: "--font-playfair",
-  display: "swap",
-})
-
-const montserrat = Montserrat({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-montserrat",
-  display: "swap",
-})
 
 const homeSeo = PAGES["/"]
 const home = pageMetadata("/")
@@ -101,8 +85,26 @@ export default async function RootLayout({
   const isAdmin = pathname.startsWith("/admin")
 
   return (
-    <html lang="en-ZA" className="scroll-smooth" suppressHydrationWarning>
-      <body className={`${playfair.variable} ${montserrat.variable} font-sans bg-background text-on-surface antialiased`}>
+    <html
+      lang="en-ZA"
+      className="scroll-smooth"
+      suppressHydrationWarning
+      style={
+        {
+          "--font-playfair": '"Playfair Display", Georgia, serif',
+          "--font-montserrat": '"Montserrat", system-ui, sans-serif',
+        } as React.CSSProperties
+      }
+    >
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body className="font-sans bg-background text-on-surface antialiased">
         {isAdmin ? (
           children
         ) : (

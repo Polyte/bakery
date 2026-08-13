@@ -16,7 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import type { AdminSession } from "@/lib/admin/domain"
+import type { AdminSession } from "@/lib/admin/types"
 
 type AdminHeaderProps = {
   user?: AdminSession | null

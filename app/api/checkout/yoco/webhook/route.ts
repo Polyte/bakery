@@ -1,6 +1,13 @@
 import { NextResponse } from "next/server"
-import nodemailer from "nodemailer"
+import {
+  OrderStatus,
+  PaymentRecordStatus,
+  PaymentStatus,
+} from "@prisma/client"
+import { allocatePaymentNumber, createNotification } from "@/lib/admin/domain"
+import { prisma } from "@/lib/db"
 import { verifyYocoWebhookSignature } from "@/lib/yoco"
+import nodemailer from "nodemailer"
 
 export const runtime = "nodejs"
 
@@ -46,13 +53,140 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid JSON." }, { status: 400 })
   }
 
+  const idempotencyKey = event.id || event.payload?.id
+  if (idempotencyKey) {
+    const existing = await prisma.webhookEvent.findUnique({ where: { idempotencyKey } })
+    if (existing?.processed) {
+      return NextResponse.json({ received: true, duplicate: true })
+    }
+    await prisma.webhookEvent.upsert({
+      where: { idempotencyKey },
+      create: {
+        provider: "yoco",
+        eventType: event.type ?? "unknown",
+        payload: body,
+        signature,
+        idempotencyKey,
+        processed: false,
+      },
+      update: {},
+    })
+  }
+
   if (event.type === "payment.succeeded") {
+    await persistYocoPayment(event).catch((error) => {
+      console.error("Yoco payment persist failed:", error)
+    })
     await notifyPayment(event).catch((error) => {
       console.error("Yoco payment email failed:", error)
     })
   }
 
+  if (idempotencyKey) {
+    await prisma.webhookEvent.updateMany({
+      where: { idempotencyKey },
+      data: { processed: true },
+    })
+  }
+
   return NextResponse.json({ received: true })
+}
+
+async function persistYocoPayment(event: YocoWebhookEvent) {
+  const meta = event.payload?.metadata ?? {}
+  const orderNumber = meta.orderNumber?.trim()
+  if (!orderNumber) return
+
+  const amountCents = event.payload?.amount ?? 0
+  const amount = Math.round(amountCents) / 100
+  if (amount <= 0) return
+
+  const order = await prisma.order.findUnique({ where: { orderNumber } })
+  if (!order) return
+
+  const gatewayId = event.payload?.id
+  if (gatewayId) {
+    const existingPayment = await prisma.payment.findFirst({
+      where: { gatewayId },
+    })
+    if (existingPayment) return
+  }
+
+  const paymentNumber = await allocatePaymentNumber()
+
+  await prisma.$transaction(async (tx) => {
+    await tx.payment.create({
+      data: {
+        paymentNumber,
+        customerId: order.customerId,
+        orderId: order.id,
+        amount,
+        method: "yoco",
+        status: PaymentRecordStatus.SUCCEEDED,
+        reference: orderNumber,
+        gatewayId: gatewayId ?? undefined,
+        gatewayPayload: JSON.stringify(event.payload ?? {}),
+        paidAt: new Date(),
+        verifiedAt: new Date(),
+        notes: "Auto-verified via Yoco webhook",
+      },
+    })
+
+    const amountPaid = Math.round((order.amountPaid + amount) * 100) / 100
+    const paymentStatus =
+      amountPaid >= order.total
+        ? PaymentStatus.PAID
+        : amountPaid > 0
+          ? PaymentStatus.PARTIALLY_PAID
+          : order.paymentStatus
+
+    const nextStatus =
+      paymentStatus === PaymentStatus.PAID &&
+      (order.status === OrderStatus.NEW ||
+        order.status === OrderStatus.AWAITING_DEPOSIT ||
+        order.status === OrderStatus.PAYMENT_VERIFICATION)
+        ? OrderStatus.CONFIRMED
+        : order.status
+
+    await tx.order.update({
+      where: { id: order.id },
+      data: {
+        amountPaid,
+        paymentStatus,
+        paymentMethod: "yoco",
+        status: nextStatus,
+        confirmedAt: nextStatus === OrderStatus.CONFIRMED ? new Date() : order.confirmedAt,
+      },
+    })
+
+    if (nextStatus !== order.status) {
+      await tx.orderStatusHistory.create({
+        data: {
+          orderId: order.id,
+          fromStatus: order.status,
+          toStatus: nextStatus,
+          note: "Payment confirmed via Yoco",
+        },
+      })
+    }
+
+    await tx.incomeTransaction.create({
+      data: {
+        category: amountPaid >= order.total ? "final_payment" : "deposit",
+        description: `Yoco payment ${orderNumber}`,
+        amount,
+        orderId: order.id,
+        date: new Date(),
+      },
+    })
+  })
+
+  await createNotification({
+    title: "Yoco payment received",
+    body: `${orderNumber} — R${amount.toFixed(2)}`,
+    type: "payment",
+    href: `/admin/orders/${orderNumber}`,
+  })
 }
 
 async function notifyPayment(event: YocoWebhookEvent) {

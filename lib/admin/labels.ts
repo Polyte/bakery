@@ -1,6 +1,6 @@
-import type { OrderStatus } from "@prisma/client"
+/** Client-safe labels — do not import @prisma/client here. */
 
-export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
+export const ORDER_STATUS_LABELS: Record<string, string> = {
   NEW: "New",
   QUOTE_REQUIRED: "Quote required",
   QUOTE_SENT: "Quote sent",
@@ -21,7 +21,7 @@ export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   FAILED: "Failed",
 }
 
-export const BOARD_COLUMNS: OrderStatus[] = [
+export const BOARD_COLUMNS = [
   "NEW",
   "AWAITING_DEPOSIT",
   "PAYMENT_VERIFICATION",
@@ -31,4 +31,6 @@ export const BOARD_COLUMNS: OrderStatus[] = [
   "READY_FOR_COLLECTION",
   "OUT_FOR_DELIVERY",
   "COMPLETED",
-]
+] as const
+
+export type BoardColumnStatus = (typeof BOARD_COLUMNS)[number]

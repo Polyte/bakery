@@ -1,20 +1,44 @@
+# Production-oriented stack (app + postgres).
+# Dev DB only: `docker compose up -d` (postgres on host port 5434).
+
 services:
   postgres:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: dadda
-      POSTGRES_PASSWORD: dadda_dev
-      POSTGRES_DB: dadda_bakery
+      POSTGRES_USER: ${POSTGRES_USER:-dadda}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dadda_dev}
+      POSTGRES_DB: ${POSTGRES_DB:-dadda_bakery}
     ports:
-      - "5434:5432"
+      - "${POSTGRES_PORT:-5434}:5432"
     volumes:
       - dadda_pg_data:/var/lib/postgresql/data
+      - ./scripts/backup:/backups
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U dadda -d dadda_bakery"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-dadda} -d ${POSTGRES_DB:-dadda_bakery}"]
       interval: 5s
       timeout: 5s
       retries: 10
+
+  app:
+    profiles: ["full"]
+    build: .
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-dadda}:${POSTGRES_PASSWORD:-dadda_dev}@postgres:5432/${POSTGRES_DB:-dadda_bakery}?schema=public
+      JWT_SECRET: ${JWT_SECRET}
+      SESSION_SECRET: ${SESSION_SECRET}
+      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL}
+      EMAIL_USER: ${EMAIL_USER}
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD}
+      CONTACT_EMAIL: ${CONTACT_EMAIL}
+      YOCO_SECRET_KEY: ${YOCO_SECRET_KEY}
+      YOCO_WEBHOOK_SECRET: ${YOCO_WEBHOOK_SECRET}
+    depends_on:
+      postgres:
+        condition: service_healthy
 
 volumes:
   dadda_pg_data:
