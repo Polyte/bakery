@@ -1,5 +1,6 @@
 import type React from "react"
 import type { Metadata, Viewport } from "next"
+import { headers } from "next/headers"
 import { Playfair_Display, Montserrat } from "next/font/google"
 import "./globals.css"
 import Header from "@/components/header"
@@ -90,23 +91,33 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const headerStore = await headers()
+  const pathname = headerStore.get("x-pathname") || ""
+  const isAdmin = pathname.startsWith("/admin")
+
   return (
-    <html lang="en-ZA" className="scroll-smooth">
+    <html lang="en-ZA" className="scroll-smooth" suppressHydrationWarning>
       <body className={`${playfair.variable} ${montserrat.variable} font-sans bg-background text-on-surface antialiased`}>
-        <JsonLd data={[bakeryJsonLd(), websiteJsonLd()]} />
-        <CakeOrderProvider>
-          <Preloader />
-          <Header />
-          <PageAnimations>
-            <main>{children}</main>
-          </PageAnimations>
-          <Footer />
-        </CakeOrderProvider>
+        {isAdmin ? (
+          children
+        ) : (
+          <>
+            <JsonLd data={[bakeryJsonLd(), websiteJsonLd()]} />
+            <CakeOrderProvider>
+              <Preloader />
+              <Header />
+              <PageAnimations>
+                <main>{children}</main>
+              </PageAnimations>
+              <Footer />
+            </CakeOrderProvider>
+          </>
+        )}
       </body>
     </html>
   )

@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { ArrowLeft, Calendar, Cake, Check, Clock, Download, MapPin } from "lucide-react"
 import { useCakeOrder } from "@/components/cake-order-provider"
-import { PICKUP_ADDRESS, formatCalendarDate } from "@/lib/cake-order"
+import { PICKUP_ADDRESS, displayConfirmedOrder, formatCalendarDate } from "@/lib/cake-order"
 
 function toCalStamp(isoDate: string, hours: number, minutes: number) {
   const d = new Date(`${isoDate}T00:00:00+02:00`)
@@ -14,7 +14,7 @@ function toCalStamp(isoDate: string, hours: number, minutes: number) {
 
 export default function AddToCalendarPage() {
   const { draft, lastOrder } = useCakeOrder()
-  const order = lastOrder ?? draft
+  const order = displayConfirmedOrder(draft, lastOrder)
   const isDelivery = order.delivery === "delivery" && order.address
   const title = `${order.productName} ${isDelivery ? "delivery" : "pickup"} — Dadda's Confectionery`
   const location = isDelivery ? order.address : PICKUP_ADDRESS

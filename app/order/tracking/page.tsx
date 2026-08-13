@@ -4,11 +4,11 @@ import Link from "next/link"
 import { CheckCircle2, Home, Phone, RefreshCw, Store, Truck } from "lucide-react"
 import LazyImage from "@/components/lazy-image"
 import { useCakeOrder } from "@/components/cake-order-provider"
-import { extrasList, formatRand, getFilling, grandTotal, messageCardAmount } from "@/lib/cake-order"
+import { displayConfirmedOrder, extrasList, formatRand, getFilling, grandTotal, messageCardAmount } from "@/lib/cake-order"
 
 export default function OrderTrackingPage() {
   const { draft, lastOrder } = useCakeOrder()
-  const order = lastOrder ?? draft
+  const order = displayConfirmedOrder(draft, lastOrder)
   const filling = getFilling(order.fillingId)
   const orderNumber = order.orderNumber ?? "#DC-0000"
 

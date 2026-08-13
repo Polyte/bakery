@@ -1,23 +1,23 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { ArrowLeft, Check, ChefHat, Copy, Mail, Paintbrush, Truck } from "lucide-react"
 import LazyImage from "@/components/lazy-image"
 import BankingDetailsCard from "@/components/banking-details-card"
 import OrderFireworks from "@/components/order-fireworks"
 import { useCakeOrder } from "@/components/cake-order-provider"
-import { cartCount, formatLongDate } from "@/lib/cake-order"
+import { cartCount, displayConfirmedOrder, formatLongDate } from "@/lib/cake-order"
+import { notifyOrderEmails } from "@/lib/place-order"
 import { SITE } from "@/lib/seo"
 
 export default function OrderConfirmedPage() {
   const { draft, lastOrder, confirmOrder, hydrated } = useCakeOrder()
-  const confirmed = useRef(false)
   const [paymentKind, setPaymentKind] = useState<string | null>(null)
   const [copiedNumber, setCopiedNumber] = useState(false)
   const [emailFailed, setEmailFailed] = useState(false)
   const isEft = paymentKind === "eft"
-  const order = lastOrder ?? draft
+  const order = displayConfirmedOrder(draft, lastOrder)
   const orderNumber = order.orderNumber ?? (hydrated ? "#DC-0000" : "…")
   const popMailto = `mailto:${SITE.email}?subject=${encodeURIComponent(`Proof of payment ${orderNumber}`)}&body=${encodeURIComponent(`Please find attached proof of payment for order ${orderNumber}.`)}`
 
@@ -25,46 +25,42 @@ export default function OrderConfirmedPage() {
     const params = new URLSearchParams(window.location.search)
     const payment = params.get("payment")
     setPaymentKind(payment)
-    setEmailFailed(params.get("email") === "failed")
-    if (!hydrated || confirmed.current) return
+    if (params.get("email") === "failed") setEmailFailed(true)
+    if (!hydrated) return
     if (payment !== "yoco" && payment !== "eft") return
 
-    const alreadyThisOrder =
-      Boolean(lastOrder?.orderNumber) && lastOrder?.orderNumber === draft.orderNumber && Boolean(lastOrder?.confirmedAt)
-    const shouldConfirm = Boolean(draft.orderNumber) || cartCount(draft) > 0
-    if (alreadyThisOrder || !shouldConfirm) {
-      confirmed.current = true
-      return
-    }
-
-    confirmed.current = true
-    let keepCustomer = false
-    try {
-      keepCustomer = sessionStorage.getItem("dadda-keep-customer") === "1"
-      sessionStorage.removeItem("dadda-keep-customer")
-    } catch {
-      /* guest checkout */
-    }
-    if (keepCustomer) {
-      confirmOrder(payment === "eft" ? { paymentMethod: "eft" } : { paymentMethod: "yoco" }, { keepCustomer: true })
-      return
-    }
-    let cancelled = false
-    ;(async () => {
+    const alreadyConfirmed =
+      Boolean(lastOrder?.confirmedAt) &&
+      (lastOrder?.orderNumber === draft.orderNumber || cartCount(draft) === 0)
+    const shouldConfirm = cartCount(draft) > 0 || Boolean(draft.orderNumber)
+    if (!alreadyConfirmed && shouldConfirm) {
+      let keepCustomer = false
       try {
-        const res = await fetch("/api/account/me")
-        const data = (await res.json()) as { user?: { id?: string } | null }
-        keepCustomer = Boolean(data.user)
+        keepCustomer = sessionStorage.getItem("dadda-keep-customer") === "1"
       } catch {
         /* guest checkout */
       }
-      if (cancelled) return
       confirmOrder(payment === "eft" ? { paymentMethod: "eft" } : { paymentMethod: "yoco" }, { keepCustomer })
-    })()
-    return () => {
-      cancelled = true
     }
-  }, [hydrated, confirmOrder, draft.confirmedAt, draft.orderNumber, lastOrder?.orderNumber, lastOrder?.confirmedAt])
+
+    if (payment !== "yoco") return
+    let pending: string | null = null
+    try {
+      pending = sessionStorage.getItem("dadda-pending-yoco-email")
+    } catch {
+      return
+    }
+    const emailDraft = cartCount(draft) > 0 ? draft : lastOrder
+    if (!pending || !emailDraft || pending !== (emailDraft.orderNumber ?? pending)) return
+    try {
+      sessionStorage.removeItem("dadda-pending-yoco-email")
+    } catch {
+      /* still send once */
+    }
+    void notifyOrderEmails({ ...emailDraft, orderNumber: pending, paymentMethod: "yoco" }).then((emailed) => {
+      if (!emailed) setEmailFailed(true)
+    })
+  }, [hydrated, confirmOrder, draft, lastOrder])
 
   const copyOrderNumber = async () => {
     try {
@@ -154,7 +150,7 @@ export default function OrderConfirmedPage() {
                 Email proof of payment
               </a>
               <h3 className="mb-3 font-display text-lg font-semibold text-chocolate-text">Banking details</h3>
-              <p className="mb-4 text-sm text-on-surface-variant">Use these FNB details if you still need to transfer.</p>
+              <p className="mb-4 text-sm text-on-surface-variant">Use these Capitec details if you still need to transfer, or PayShap to the Standard Bank number.</p>
               <BankingDetailsCard compact />
             </div>
           </div>

@@ -140,12 +140,13 @@ export default function CheckoutPage() {
     const account = await prepareAccount()
     if (!account) return
     setPaying(true)
+    const orderNumber = draft.orderNumber ?? generateOrderNumber()
     try {
       sessionStorage.setItem("dadda-keep-customer", account.keepCustomer ? "1" : "0")
+      sessionStorage.setItem("dadda-pending-yoco-email", orderNumber)
     } catch {
       /* ignore */
     }
-    const orderNumber = draft.orderNumber ?? generateOrderNumber()
     const nextDraft = { ...draft, orderNumber, paymentMethod: "yoco" as const }
     update({ orderNumber, paymentMethod: "yoco" })
     try {
@@ -153,8 +154,6 @@ export default function CheckoutPage() {
     } catch {
       /* still redirect */
     }
-    const emailed = await notifyOrderEmails(nextDraft)
-    if (!emailed) console.error("Order confirmation emails did not send. Continuing to Yoco.")
     window.location.href = buildYocoPaymentPageUrl({
       amount: total,
       reference: orderNumber,
@@ -330,7 +329,7 @@ export default function CheckoutPage() {
                   </div>
                   <div>
                     <h2 className="font-display text-xl font-semibold text-chocolate-text">Banking details</h2>
-                    <p className="text-sm text-on-surface-variant">Use these FNB details for a manual EFT transfer.</p>
+                    <p className="text-sm text-on-surface-variant">Use these Capitec details for a manual EFT transfer, or PayShap to the Standard Bank number.</p>
                   </div>
                 </div>
                 <BankingDetailsCard />

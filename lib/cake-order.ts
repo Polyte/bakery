@@ -174,6 +174,13 @@ export function cartCount(draft: CakeDraft) {
   return extrasCount(draft) + (draft.category ? 1 : 0)
 }
 
+/** Use the in-flight cart when it still has items so an older snapshot is not shown. */
+export function displayConfirmedOrder(draft: CakeDraft, lastOrder: CakeDraft | null): CakeDraft {
+  if (cartCount(draft) > 0) return draft
+  if (draft.orderNumber && draft.orderNumber !== lastOrder?.orderNumber) return draft
+  return lastOrder ?? draft
+}
+
 export function extraKindLabel(item: CatalogLineItem) {
   if (item.kind) return item.kind
   if (item.id.startsWith("popsticle")) return "Popsticles"

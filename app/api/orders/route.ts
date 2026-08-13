@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { type CakeDraft, extrasCount, includeCakeInTotal } from "@/lib/cake-order"
 import { adminOrderEmail, customerOrderEmail } from "@/lib/order-email"
 import { ADMIN_EMAIL, mailTransport } from "@/lib/mailer"
+import { persistOrderFromDraft } from "@/lib/orders/persist-draft"
 
 export const runtime = "nodejs"
 
@@ -27,15 +28,28 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Your cart is empty." }, { status: 400 })
   }
 
+  let orderNumber = draft.orderNumber
+  let orderId: string | undefined
+
+  try {
+    const order = await persistOrderFromDraft(draft)
+    orderNumber = order.orderNumber
+    orderId = order.id
+  } catch (error) {
+    console.error("Order persist failed:", error)
+    return NextResponse.json({ error: "Could not save order." }, { status: 500 })
+  }
+
+  const draftForEmail = { ...draft, orderNumber }
   const transporter = mailTransport()
   if (!transporter) {
     console.error("Order emails skipped: EMAIL_USER or EMAIL_PASSWORD is not set.")
-    return NextResponse.json({ ok: true, emailed: false })
+    return NextResponse.json({ ok: true, emailed: false, orderNumber, orderId })
   }
 
   const from = process.env.EMAIL_USER
-  const customer = customerOrderEmail(draft)
-  const admin = adminOrderEmail(draft)
+  const customer = customerOrderEmail(draftForEmail)
+  const admin = adminOrderEmail(draftForEmail)
 
   const results = await Promise.allSettled([
     transporter.sendMail({
@@ -61,8 +75,8 @@ export async function POST(request: Request) {
     for (const result of failed) {
       if (result.status === "rejected") console.error("Order email failed:", result.reason)
     }
-    return NextResponse.json({ ok: true, emailed: false })
+    return NextResponse.json({ ok: true, emailed: false, orderNumber, orderId })
   }
 
-  return NextResponse.json({ ok: true, emailed: true })
+  return NextResponse.json({ ok: true, emailed: true, orderNumber, orderId })
 }

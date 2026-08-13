@@ -1,8 +1,12 @@
-allowBuilds:
-  '@prisma/client': set this to true or false
-  '@prisma/engines': set this to true or false
-  esbuild: set this to true or false
-  prisma: set this to true or false
-  sharp: true
 onlyBuiltDependencies:
   - sharp
+  - '@prisma/client'
+  - '@prisma/engines'
+  - prisma
+  - esbuild
+allowBuilds:
+  sharp: true
+  '@prisma/client': true
+  '@prisma/engines': true
+  prisma: true
+  esbuild: true

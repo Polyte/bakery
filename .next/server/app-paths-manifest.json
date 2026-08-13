@@ -1,9 +1,1 @@
-{
-  "/manifest.webmanifest/route": "app/manifest.webmanifest/route.js",
-  "/api/account/me/route": "app/api/account/me/route.js",
-  "/order/page": "app/order/page.js",
-  "/contact/page": "app/contact/page.js",
-  "/checkout/page": "app/checkout/page.js",
-  "/order/confirmed/page": "app/order/confirmed/page.js",
-  "/order/calendar/page": "app/order/calendar/page.js"
-}
+{}
