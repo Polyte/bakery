@@ -11,7 +11,7 @@ interface EventCategoryCardProps {
 
 export default function EventCategoryCard({ title, image, href, icon }: EventCategoryCardProps) {
   return (
-    <Link href={href} className="group">
+    <Link href={href} className="group" data-stagger-item>
       <div className="card overflow-hidden h-[300px] relative"> {/* Added fixed height */}
         <div className="absolute inset-0"> {/* Changed to absolute positioning */}
           <LazyImage

@@ -1,0 +1,339 @@
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}
+.organic-shape {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    animation: morph 8s ease-in-out infinite;
+}
+@keyframes morph {
+    0% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+    50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+    100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+}
+</style><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&amp;family=Playfair+Display:ital,wght@0,600;0,700;1,400&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "on-primary-container": "#5b3912",
+                "on-primary": "#ffffff",
+                "surface-tint": "#7d562d",
+                "inverse-on-surface": "#f8f0e1",
+                "primary": "#7d562d",
+                "on-secondary-fixed": "#2b1518",
+                "background": "#fff8ef",
+                "sage-muted": "#81A969",
+                "secondary-fixed-dim": "#e4bdc0",
+                "surface-variant": "#e9e2d3",
+                "on-background": "#1e1b13",
+                "secondary": "#755759",
+                "chocolate-text": "#2D241E",
+                "on-error": "#ffffff",
+                "tertiary-container": "#ec93a5",
+                "error-container": "#ffdad6",
+                "inverse-surface": "#343026",
+                "outline": "#82756a",
+                "tertiary-fixed": "#ffd9df",
+                "on-primary-fixed-variant": "#623f18",
+                "primary-container": "#d4a373",
+                "surface-container-highest": "#e9e2d3",
+                "on-secondary": "#ffffff",
+                "on-secondary-container": "#795b5e",
+                "on-primary-fixed": "#2c1600",
+                "on-tertiary-fixed": "#3c0517",
+                "on-secondary-fixed-variant": "#5b3f42",
+                "on-tertiary-fixed-variant": "#743041",
+                "primary-fixed-dim": "#f0bd8b",
+                "inverse-primary": "#f0bd8b",
+                "on-tertiary": "#ffffff",
+                "secondary-fixed": "#ffd9dc",
+                "strawberry-accent": "#D62828",
+                "cream-surface": "#FDFBF7",
+                "surface-bright": "#fff8ef",
+                "on-tertiary-container": "#6c2a3b",
+                "surface-dim": "#e1d9cb",
+                "surface-container": "#f5edde",
+                "surface-container-low": "#fbf3e4",
+                "on-error-container": "#93000a",
+                "outline-variant": "#d4c4b7",
+                "surface": "#fff8ef",
+                "tertiary-fixed-dim": "#ffb1c0",
+                "primary-fixed": "#ffdcbd",
+                "secondary-container": "#fed6d9",
+                "tertiary": "#914758",
+                "on-surface-variant": "#50453b",
+                "on-surface": "#1e1b13",
+                "surface-container-lowest": "#ffffff",
+                "error": "#ba1a1a",
+                "surface-container-high": "#efe7d9"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "base": "8px",
+                "section-gap": "120px",
+                "margin-mobile": "16px",
+                "container-max": "1200px",
+                "margin-desktop": "64px",
+                "gutter": "24px"
+        },
+        "fontFamily": {
+                "headline-md": [
+                        "Playfair Display"
+                ],
+                "headline-lg": [
+                        "Playfair Display"
+                ],
+                "label-md": [
+                        "Montserrat"
+                ],
+                "display-lg": [
+                        "Playfair Display"
+                ],
+                "body-md": [
+                        "Montserrat"
+                ],
+                "headline-lg-mobile": [
+                        "Playfair Display"
+                ],
+                "body-lg": [
+                        "Montserrat"
+                ],
+                "label-sm": [
+                        "Montserrat"
+                ]
+        },
+        "fontSize": {
+                "headline-md": [
+                        "24px",
+                        {
+                                "lineHeight": "32px",
+                                "fontWeight": "600"
+                        }
+                ],
+                "headline-lg": [
+                        "32px",
+                        {
+                                "lineHeight": "40px",
+                                "fontWeight": "600"
+                        }
+                ],
+                "label-md": [
+                        "14px",
+                        {
+                                "lineHeight": "20px",
+                                "letterSpacing": "0.05em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "display-lg": [
+                        "48px",
+                        {
+                                "lineHeight": "56px",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "700"
+                        }
+                ],
+                "body-md": [
+                        "16px",
+                        {
+                                "lineHeight": "24px",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-lg-mobile": [
+                        "28px",
+                        {
+                                "lineHeight": "36px",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-lg": [
+                        "18px",
+                        {
+                                "lineHeight": "28px",
+                                "fontWeight": "400"
+                        }
+                ],
+                "label-sm": [
+                        "12px",
+                        {
+                                "lineHeight": "16px",
+                                "letterSpacing": "0.03em",
+                                "fontWeight": "500"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script></head><body class="bg-background font-body-md text-on-surface antialiased"><header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-20 max-w-[1200px] mx-auto px-margin-mobile lg:px-margin-desktop flex items-center justify-between"><div class="flex items-center gap-4"><img alt="Dadda's Confectionery Logo" class="h-10 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBuyuj8hmh-z9s4_43-IEOD2RHjc42IC4DEiJzKx7e-9WaZ9Ms9l1U0xr42GBj8rRgrIblslRG-KNX72V2wuJYv8acpE2mK3lbiduTvxA0bXVFi9YP4T_N19JTWnfPZXxbDpX9dTBaHul-TbGSN5qq95tZvyb26hBrlYeEsL3oZ1RZ7DL2vjOkZzStzXYGIZ84wqzdNchvVqev2MTMhe9e7L2MpzVS-BTyH7m7tJNb337t-vvBN4HvI"/><span class="font-headline-md text-headline-md text-chocolate-text tracking-tight">Dadda's Confectionery</span></div><nav class="hidden lg:flex items-center gap-base" data-active-classes="text-primary border-b-2 border-primary"><a aria-current="page" class="px-4 py-2 font-label-md transition-colors text-primary border-b-2 border-primary" data-path="home" href="#">Home</a><a class="px-4 py-2 font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="cakes" href="#">Cakes</a><a class="px-4 py-2 font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="scones-treats" href="#">Scones &amp; Treats</a><a class="px-4 py-2 font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="gallery" href="#">Gallery</a><a class="px-4 py-2 font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="about" href="#">About</a><a class="px-4 py-2 font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="contact" href="#">Contact</a></nav><div class="flex items-center gap-6"><a class="hidden md:block bg-primary text-on-primary px-8 py-3 rounded-full font-label-md text-label-md hover:bg-primary-container transition-all uppercase tracking-widest shadow-sm" data-path="order-now" href="#">Order Now</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full bg-background"><div class="flex flex-col w-full overflow-hidden">
+<!-- Hero Section -->
+<section class="relative w-full h-screen min-h-[600px] flex items-center justify-center overflow-hidden">
+<div class="absolute inset-0 z-0">
+<video autoplay="" class="w-full h-full object-cover" loop="" muted="" playsinline="">
+<source src="https://storage.googleapis.com/aida-public/video/cake-decorating-video.mp4" type="video/mp4"/>
+</video>
+<div class="absolute inset-0 bg-black/40"></div>
+</div>
+<div class="relative z-10 max-w-container-max mx-auto px-margin-mobile lg:px-margin-desktop w-full">
+<div class="max-w-2xl flex flex-col items-start pt-20">
+<div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/30 mb-6 shadow-sm">
+<span class="material-symbols-outlined text-white text-[18px]">bakery_dining</span>
+<span class="font-label-sm text-label-sm text-white uppercase tracking-widest">Handmade Daily</span>
+</div>
+<h1 class="font-display-lg text-display-lg lg:text-[64px] lg:leading-[72px] text-white mb-6 drop-shadow-md">
+        Baked with Love.<br/>
+<span class="italic font-normal">Made to Delight.</span>
+</h1>
+<p class="font-body-lg text-body-lg text-white/90 max-w-lg mb-10 drop-shadow">
+        Beautiful cakes, fresh scones and irresistible homemade treats, lovingly crafted for every occasion in the heart of Pretoria. We believe in the magic of from-scratch baking.
+      </p>
+<div class="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+<a class="w-full sm:w-auto px-8 py-4 bg-primary text-on-primary rounded-full font-label-md text-label-md hover:bg-primary-container hover:text-on-primary-container transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 duration-300 uppercase tracking-wider text-center" href="#order">
+          Order Something Delicious
+        </a>
+<a class="w-full sm:w-auto px-8 py-4 bg-white/10 backdrop-blur-sm border border-white/50 text-white rounded-full font-label-md text-label-md hover:bg-white/20 transition-all uppercase tracking-wider text-center" href="#treats">
+          Explore Our Treats
+        </a>
+</div>
+</div>
+</div>
+</section>
+<!-- Categories Section -->
+<section class="w-full py-section-gap relative bg-surface" id="treats">
+<div class="absolute inset-0 opacity-[0.03] bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPgo8cmVjdCB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjZmZmIj48L3JlY3Q+CjxwYXRoIGQ9Ik0wIDBMOCA4Wk04IDBMMCA4WiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEiPjwvcGF0aD4KPC9zdmc+')] pointer-events-none"></div>
+<div class="max-w-container-max mx-auto px-margin-mobile lg:px-margin-desktop relative z-10">
+<div class="text-center max-w-2xl mx-auto mb-16">
+<h2 class="font-headline-lg text-headline-lg lg:text-[40px] text-chocolate-text mb-4">Something Sweet for Every Occasion</h2>
+<div class="w-16 h-1 bg-primary mx-auto rounded-full"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-16 px-4 lg:px-12">
+<!-- Celebration Cakes -->
+<div class="flex flex-col items-center text-center group">
+<div class="relative w-full max-w-[280px] aspect-square mb-6 organic-shape overflow-hidden shadow-lg group-hover:shadow-xl transition-all duration-500 bg-surface-container border-4 border-surface">
+<img alt="Celebration Cakes" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCp6MYWrBaBDggLTvyrXXyVlHgrm4AezSK9GOQXX6zfXN4W9q318QqK-nZ_ETgm4ldgOWeGHk0MO-Rv16jKLkKuL3ZqfsIW5BngW4JORzTi4jRBSLM-6uNHcehSnPIp0bErIOUi6bzseU7KzMERVt6YNQGRuwij-HaDS0j589fufA22fG-KEFqXo6eoNqduFHDAB3-6RmFZMokKO-3RgIVUfgeOBAnZxnIkrFk8CqcGoI1luEVYsrbl8PfF1bL3q7PDpg"/>
+</div>
+<h3 class="font-headline-md text-headline-md text-chocolate-text mb-2">Celebration Cakes</h3>
+<a class="inline-flex items-center text-primary font-label-sm text-label-sm uppercase tracking-wider group-hover:text-primary-container transition-colors" href="#">View Gallery <span class="material-symbols-outlined ml-1 text-[16px]">arrow_forward</span></a>
+</div>
+<!-- Small Treats -->
+<div class="flex flex-col items-center text-center group md:translate-y-8">
+<div class="relative w-full max-w-[280px] aspect-square mb-6 rounded-full overflow-hidden shadow-lg group-hover:shadow-xl transition-all duration-500 bg-surface-container border-4 border-surface">
+<img alt="Small Treats" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBuWiT9c8gp68SfcNIkpT2ipdsg4cXMin1N9djYtENrAeIlV4r_vVqNme4jfWJStelQh4Bg_H7YhottENxRayYT8DW0W3S72aFLpAIsEiqrCC8-ouFomaL7hloP88QnyFcLn1POg9fcAuRyCK86G3uatDN1fZgjuLgU1dauQ-F2wzmp2V1bKtIGZNHls_imwahsht_atx54lkWKNp1cpImu3LO8Og2V1-S5FdDuVm8S_pgCAiT2SS1XxnEIiGovC3SScA"/>
+</div>
+<h3 class="font-headline-md text-headline-md text-chocolate-text mb-2">Small Treats</h3>
+<a class="inline-flex items-center text-primary font-label-sm text-label-sm uppercase tracking-wider group-hover:text-primary-container transition-colors" href="#">View Gallery <span class="material-symbols-outlined ml-1 text-[16px]">arrow_forward</span></a>
+</div>
+<!-- Custom Bakes -->
+<div class="flex flex-col items-center text-center group">
+<div class="relative w-full max-w-[280px] aspect-square mb-6 organic-shape overflow-hidden shadow-lg group-hover:shadow-xl transition-all duration-500 bg-surface-container border-4 border-surface" style="animation-delay: -4s;">
+<img alt="Custom Bakes" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0tO2HCYgqpnBbZtJPSvSh2M0mdpE5BuUpmCCbHFghcv8URL95wUk2W_FR7eB3fCEgBuVRrf80nJfR0ZmC0eVu1sjJnNsceIfhl9Oy3yCc1dqXLccIoxjKXWiR4BGxv8Ro-OgbwDE_C4htOaDJzCNNyRccJSwgD-C_FyJdXxIT4qwz8C0SRyt9j9bDbTTVHvoX1zfFn44_VwseeOGC5XQxhsdzpGywGgiX7QhzMOm3rO45YSFigLlMbCWau9_1lIIuPw"/>
+</div>
+<h3 class="font-headline-md text-headline-md text-chocolate-text mb-2">Custom Bakes</h3>
+<a class="inline-flex items-center text-primary font-label-sm text-label-sm uppercase tracking-wider group-hover:text-primary-container transition-colors" href="#">View Gallery <span class="material-symbols-outlined ml-1 text-[16px]">arrow_forward</span></a>
+</div>
+</div>
+</div>
+</section>
+<!-- Featured Products Section -->
+<section class="w-full py-section-gap bg-cream-surface">
+<div class="max-w-container-max mx-auto px-margin-mobile lg:px-margin-desktop">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+<div class="max-w-xl">
+<h2 class="font-headline-lg text-headline-lg text-chocolate-text mb-4">Our Delicious Favourites</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Discover our most beloved creations that have brought joy to countless celebrations across Pretoria.</p>
+</div>
+<a class="inline-flex items-center gap-2 font-label-md text-label-md text-primary hover:text-primary-container transition-colors uppercase tracking-wider whitespace-nowrap" href="#">
+          View All Favourites <span class="material-symbols-outlined">arrow_right_alt</span>
+</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Product 1 -->
+<div class="group flex flex-col bg-surface p-6 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 border border-outline-variant/30">
+<div class="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-surface-container mb-6">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0HEVYb2O5dLViKlbDPVacSQLrdkeZECBpYaghFbtLChqdf0c4T0NhHOd1sGrvHRtjObzq2TqCRy26gz_nampZq9t4O95Vb32_Bef1GSUcfqtt9e1RS5dE6kEKrxf2ToHfQZjlg13mlIhzj5uOGTvQXQPcyF-StS4JprowjFXsTobG6ARCOdINAPqnZ6vZh_56EU43-v0uyk7Js5yfVqIr3VhxT1qDrY2UJRQESWQF9-5k1pK6zlnW1fb7QX_eIAXUzQ"/>
+<div class="absolute top-4 right-4 bg-surface/90 backdrop-blur px-3 py-1 rounded-full text-primary font-label-sm text-label-sm shadow-sm">Popular</div>
+</div>
+<div class="flex flex-col gap-2 items-center text-center">
+<h4 class="font-headline-md text-[22px] text-chocolate-text">Themed Cupcakes</h4>
+<p class="font-body-sm text-on-surface-variant mb-2">Perfectly personalized for your special day.</p>
+<p class="font-label-md text-label-md text-primary uppercase tracking-widest">From R250</p>
+</div>
+</div>
+<!-- Product 2 -->
+<div class="group flex flex-col bg-surface p-6 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 border border-outline-variant/30">
+<div class="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-surface-container mb-6">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBB8Vppq6iByCKZ7fcNnLkTnrMjLqAtychKqQMveUjRwfa4ArIshI5JErm7y-xQIvekv69JWJxeZNBwYwFnrZLi-6ZDzhde2lhSUj2Cs23tjOgQwqaJXH_yUWkzmKpzefdUn-541x52CJgoer0K08sbcOuvQRj7w5w4NWlGd7LvjyGJYgbuPF3y7lFxGUG8IZwG2kMm7XQ6LsJYT8YL754ga6dV-2nhAL0sK9n5m1NocuN2bOrjLbH9NCSndmPsj1F3SA"/>
+</div>
+<div class="flex flex-col gap-2 items-center text-center">
+<h4 class="font-headline-md text-[22px] text-chocolate-text">Princess Cupcakes</h4>
+<p class="font-body-sm text-on-surface-variant mb-2">Magical treats for a royal celebration.</p>
+<p class="font-label-md text-label-md text-primary uppercase tracking-widest">From R280</p>
+</div>
+</div>
+<!-- Product 3 -->
+<div class="group flex flex-col bg-surface p-6 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 border border-outline-variant/30">
+<div class="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-surface-container mb-6">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFfPIbTEQGhBV775dBlrMSh6oRRpTSYVB8tDA48hqaeZllkpwSQ-135cTdBXe_TbtlNs4JkvyUhcRf6yWnTBtAuDMTtcQJQ3DQydlx4L7jpmOnwmDP6cSm58gaiBWt_5aRXIOzjhIb3u732J7RAhtbdrwjagYuEMS4q1SgNoHDANkJAC5gmHsvYdSIjb9Afyc8MYmulprqC64lodu4cMv69yPrzzKg-lzFMvIXhWthlRY0zzvjCm6HPaxKqAKkO8CaAQ"/>
+<div class="absolute top-4 right-4 bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full font-label-sm text-label-sm shadow-sm">New Flavours</div>
+</div>
+<div class="flex flex-col gap-2 items-center text-center">
+<h4 class="font-headline-md text-[22px] text-chocolate-text">Milestone Cupcakes</h4>
+<p class="font-body-sm text-on-surface-variant mb-2">Celebrate the big numbers in style.</p>
+<p class="font-label-md text-label-md text-primary uppercase tracking-widest">From R250</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Seasonal Special Section -->
+<section class="w-full py-section-gap bg-surface-container-low">
+<div class="max-w-container-max mx-auto px-margin-mobile lg:px-margin-desktop">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+<div class="order-2 lg:order-1 flex flex-col items-start">
+<span class="font-label-md text-primary uppercase tracking-widest mb-4">Limited Time</span>
+<h2 class="font-headline-lg text-headline-lg lg:text-[40px] text-chocolate-text mb-6">Seasonal Special</h2>
+<p class="font-body-lg text-on-surface-variant mb-8">Embrace the season with our exclusive signature creation. A perfect blend of delicate flavors and elegant design, available for a limited time only to make your moments unforgettable.</p>
+<a class="px-8 py-4 bg-primary text-on-primary rounded-full font-label-md uppercase tracking-wider hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-md" href="#">Request Quote</a>
+</div>
+<div class="order-1 lg:order-2">
+<img alt="Seasonal Special" class="w-full max-w-md mx-auto rounded-3xl shadow-2xl object-cover aspect-[3/4]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWV1tZXKfpGsdCcAaRiKH7SNO_j-eZCD1CDg7Qur9eCSZSub_LiQpiLXujlunAWgPL0UgeeIV9U2u6P_HtNzHw_waq7H7rtx4kyff8y0qGtiiqqbukdFnYIf1UwAe01njCdd62_gnY3Xd_aKuixDZMqkvpl9vT_B54zSBSyVeG5AZj7QhOGZ-BfJ880iyRpFO4WD0BZ3nYnBnUAA00djNlTBAhsa42n4CcQF7Uu9YHUT9k2oaPJHlz9KrW56azQe6qhQ"/>
+</div>
+</div>
+</div>
+</section>
+<!-- The Dadda's Story Section -->
+<section class="w-full py-section-gap bg-surface">
+<div class="max-w-container-max mx-auto px-margin-mobile lg:px-margin-desktop">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+<div>
+<img alt="Baking process" class="w-full rounded-[40px] shadow-xl object-cover aspect-video lg:aspect-square" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxAIQRcT41KkRJYmwUj6Kx-XZglUgbXlGUjdduWk2ESKeJnJbtT97oF-6hqugBMm75eCdu6s9c50USAjkFiVQ6kR4wUS213s0NZD6nfP65dWYG2JmqOSWfYdE_Ko_EkzgVaHcvfOs7Pm6c2ujFvANmEVftgi2QX4XOCdqrgJjmNGEIpsPX3re4Plbe0cbFQdiLunzTnV4QHQ3FH5MnY8cy1BoLgZ2iLu4EHi04tniLe5zFcokYXVLhA1t3aPTZwdobjg"/>
+</div>
+<div class="flex flex-col items-start">
+<h2 class="font-headline-lg text-headline-lg lg:text-[40px] text-chocolate-text mb-6">The Dadda's Story</h2>
+<p class="font-body-lg text-on-surface-variant mb-6">Our journey began with a simple passion for creating moments of joy through the art of baking. Every recipe has been passed down and perfected, ensuring that each bite carries the warmth of our heritage.</p>
+<p class="font-body-md text-on-surface-variant">We source the finest ingredients and pour our hearts into every creation, because we believe that a truly great bake is not just tasted, but felt.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Sweet Celebrations Section -->
+<section class="w-full py-section-gap bg-cream-surface">
+<div class="max-w-container-max mx-auto px-margin-mobile lg:px-margin-desktop">
+<div class="text-center max-w-2xl mx-auto mb-16">
+<h2 class="font-headline-lg text-headline-lg lg:text-[40px] text-chocolate-text mb-4">Sweet Celebrations</h2>
+<p class="font-body-md text-on-surface-variant">Real moments of joy made sweeter with our custom creations.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<img alt="Celebration setup" class="w-full h-80 object-cover rounded-2xl shadow-md hover:shadow-xl transition-shadow" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzP115_r2KZGsNW8HKRsVDfKrYS5boAg6hURfhH8FqUyWgEiiiE_csyihAoD7w-EKBgHEtYgFky7oqZebyEmPdisUvLUUiw1F0fx94nMXb_RTshjcXcqIp-fWesIQgwLMOtHFZcF0PeztZfi590mVPw3_VR6CVRqdGmlluQmJthpXE3BgAvg4CZltLBZgNZodW1Z9Ahe5J5FoXwG9VXxMfWjobCX3pt5ynW81qE5piSS23JjRKM95qJRZQ5AbbANLGWA"/>
+<img alt="Party cake" class="w-full h-80 object-cover rounded-2xl shadow-md hover:shadow-xl transition-shadow translate-y-0 md:translate-y-8" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcfB0qpOenspkBV03gZtzRNn87wFfZDCPUHsrxTJm7FLfPefyvZa67Zle9dovL1FvgILpQ_FFBVIHyv3hQ9BZjgkbPLz6QOYIYVpT7GZHVGQpdY2zskeLlVn7BjFkqWc7HXStovO7TKxYrecbPEWYxtkvayj_mu9CugnITX3eq5SIBNmFltq7R-XdGsfm4dzqsYd46b3wxHqr8Xz940l2fvfFXy52q5zOmVNLiz4vOYTBR1RL67RWpi5XFCCh8iJqvhw"/>
+<img alt="Event dessert" class="w-full h-80 object-cover rounded-2xl shadow-md hover:shadow-xl transition-shadow" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB440vgdTZ0hPyFgJFj9vhN0KHVMbRxsF82UUiigeSHKBgVNR0w5pVu4i71GdUhrA9kFo1eTj2xMebkmu-n__50vIowAE6wzUS7jplJZcP5OYiaeqqLBWs25AJCrlDpR186WQ6g2ClB-tMo3YyJgnTmgEKQmWuPsClT-CXycOuusLjkvLC4uDT2i51uVTQhE6RzgVPis2zm2VWq08kxGaGqGRifTIr4jTFPGjppg-9tWSIRVoRsQxhC9uGHru2SPrK33w"/>
+</div>
+</div>
+</section>
+</div></main><footer class="w-full bg-surface-container py-section-gap"><div class="max-w-[1200px] mx-auto px-margin-mobile lg:px-margin-desktop grid grid-cols-1 md:grid-cols-3 gap-gutter"><div class="flex flex-col gap-4"><h4 class="font-headline-md text-headline-md text-chocolate-text">Dadda's Confectionery</h4><p class="font-body-md text-body-md text-on-surface-variant italic">Baked with Love</p></div><div class="flex flex-col gap-4"><h5 class="font-label-md text-label-md text-primary uppercase">Connect</h5><div class="flex gap-4"><span class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer transition-colors">qr_code_2</span><span class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer transition-colors">share</span><span class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer transition-colors">mail</span></div><p class="font-body-md text-body-md text-on-surface-variant">123 Baker Street, Sweet City</p></div><div class="flex flex-col gap-4 items-start md:items-end"><h5 class="font-label-md text-label-md text-primary uppercase">Contact</h5><p class="font-body-md text-body-md text-on-surface-variant">hello@daddasconfectionery.com</p><p class="font-body-md text-body-md text-on-surface-variant">+1 (555) 000-0000</p></div></div><div class="max-w-[1200px] mx-auto px-margin-mobile lg:px-margin-desktop mt-16 pt-8 border-t border-outline-variant text-center font-label-sm text-label-sm text-on-surface-variant">© 2024 Dadda's Confectionery. All rights reserved.</div></footer></body></html>

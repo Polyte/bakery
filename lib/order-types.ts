@@ -42,6 +42,8 @@ export interface OrderDetails {
   eventDate?: string
   deliveryOption: "pickup" | "delivery"
   deliveryAddress?: string
+  deliveryKm?: number | null
+  deliveryFee?: number
   items: OrderItem[]
   totalPrice: number // Total price in ZAR
   paymentMethod: string // Simulated

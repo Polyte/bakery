@@ -1,4 +1,4 @@
-// File: /Users/polyteme/bakery/app/layout.tsx
+// File: /Users/thebuyshop/bakery/app/layout.tsx
 import * as entry from '../../../app/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

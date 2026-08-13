@@ -1,11 +1,12 @@
+import type { Metadata } from "next"
 import fs from "fs"
 import path from "path"
-import type { Metadata } from "next"
 import GalleryClient from "./GalleryClient"
+import SeoGraph from "@/components/seo-graph"
+import { pageMetadata } from "@/lib/seo"
 
-export const metadata: Metadata = {
-  title: "Our Cake Gallery",
-}
+export const metadata: Metadata = pageMetadata("/gallery")
+export const revalidate = 3600
 
 // Curated base items (kept from previous implementation)
 const curatedItems = [
@@ -143,5 +144,10 @@ export default async function GalleryPage() {
 
   const categories = Array.from(new Set(["All", ...allItems.map((i) => i.category)]))
 
-  return <GalleryClient items={allItems} categories={categories} />
+  return (
+    <>
+      <SeoGraph path="/gallery" />
+      <GalleryClient items={allItems} categories={categories} />
+    </>
+  )
 }

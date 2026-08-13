@@ -2,11 +2,12 @@
 
 import type React from "react"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { ChevronLeft, ChevronRight, Heart, Cake, Sparkles, Coffee, Gift } from "lucide-react"
 import Link from "next/link"
+import { gsap, useGSAP } from "@/lib/gsap"
+import { onIntroComplete } from "@/lib/intro"
 import LazyImage from "./lazy-image"
- 
 
 interface CarouselSlide {
   id: number
@@ -99,6 +100,8 @@ export default function HeroCarousel() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
   const [isTransitioning, setIsTransitioning] = useState(false)
+  const container = useRef<HTMLElement>(null)
+  const progressRef = useRef<HTMLDivElement>(null)
 
   const nextSlide = useCallback(() => {
     if (isTransitioning) return
@@ -136,7 +139,6 @@ export default function HeroCarousel() {
     [currentSlide, isTransitioning],
   )
 
-  // Auto-play functionality
   useEffect(() => {
     if (!isAutoPlaying) return
 
@@ -144,11 +146,9 @@ export default function HeroCarousel() {
     return () => clearInterval(interval)
   }, [isAutoPlaying, nextSlide])
 
-  // Pause auto-play on hover
   const handleMouseEnter = () => setIsAutoPlaying(false)
   const handleMouseLeave = () => setIsAutoPlaying(true)
 
-  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "ArrowLeft") prevSlide()
@@ -159,54 +159,129 @@ export default function HeroCarousel() {
     return () => window.removeEventListener("keydown", handleKeyDown)
   }, [nextSlide, prevSlide])
 
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia()
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.to(".hero-slides", {
+          yPercent: 12,
+          ease: "none",
+          scrollTrigger: {
+            trigger: container.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: true,
+          },
+        })
+        gsap.to(".hero-watermark", {
+          y: 12,
+          duration: 2.8,
+          ease: "sine.inOut",
+          yoyo: true,
+          repeat: -1,
+        })
+      })
+      return () => mm.revert()
+    },
+    { scope: container },
+  )
+
+  useGSAP(
+    (_context, contextSafe) => {
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      gsap.set(".hero-copy > *", { autoAlpha: 1, y: 0, scale: 1 })
+
+      const playSlide = contextSafe(() => {
+        gsap.set(".hero-copy > *", { autoAlpha: 1, y: 0, scale: 1 })
+
+        if (reduceMotion) {
+          gsap.set(".hero-slide", {
+            autoAlpha: (i: number) => (i === currentSlide ? 1 : 0),
+            scale: 1,
+          })
+          if (progressRef.current) {
+            gsap.set(progressRef.current, {
+              scaleX: (currentSlide + 1) / carouselSlides.length,
+              transformOrigin: "left center",
+            })
+          }
+          return
+        }
+
+        const slides = gsap.utils.toArray<HTMLElement>(".hero-slide")
+        slides.forEach((slide, i) => {
+          gsap.to(slide, {
+            autoAlpha: i === currentSlide ? 1 : 0,
+            duration: 1,
+            ease: "power2.inOut",
+            overwrite: "auto",
+          })
+        })
+
+        const activeImg = slides[currentSlide]?.querySelector("img")
+        if (activeImg) {
+          gsap.fromTo(activeImg, { scale: 1.08 }, { scale: 1, duration: 6.2, ease: "none", overwrite: "auto" })
+        }
+
+        if (progressRef.current) {
+          gsap.to(progressRef.current, {
+            scaleX: (currentSlide + 1) / carouselSlides.length,
+            duration: 0.6,
+            ease: "power2.out",
+            transformOrigin: "left center",
+            overwrite: "auto",
+          })
+        }
+      })
+
+      return onIntroComplete(playSlide)
+    },
+    { scope: container, dependencies: [currentSlide], revertOnUpdate: true },
+  )
+
   const currentSlideData = carouselSlides[currentSlide]
 
   return (
     <section
+      ref={container}
       className="relative min-h-[600px] h-[calc(100vh-4rem)] overflow-hidden"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       role="region"
       aria-label="Hero carousel showcasing Dadda's Confectionery offerings"
     >
-      {/* Background Images with Enhanced Parallax Effect */}
-      <div className="absolute inset-0 h-full">
+      <div className="hero-slides absolute inset-0 h-full">
         {carouselSlides.map((slide, index) => (
           <div
             key={slide.id}
-            className={`absolute inset-0 h-full w-full transition-all duration-1000 ease-in-out ${
-              index === currentSlide ? "opacity-100 scale-100" : "opacity-0 scale-105"
-            }`}
+            className="hero-slide absolute inset-0 h-full w-full"
+            style={{ opacity: index === 0 ? 1 : 0, visibility: index === 0 ? "inherit" : "hidden" }}
             aria-hidden={index !== currentSlide}
           >
-            <LazyImage 
-              src={slide.image} 
-              alt="" 
-              fill 
-              priority={index === 0} 
+            <LazyImage
+              src={slide.image}
+              alt=""
+              fill
+              priority={index === 0}
               sizes="100vw"
-              className="object-cover object-center" 
+              className="object-cover object-center"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/60" />
           </div>
         ))}
       </div>
 
-      {/* Enhanced Floating Logo Watermark */}
-      <div className="absolute top-1/2 right-10 -translate-y-1/2 w-40 h-40 opacity-10 pointer-events-none hidden xl:block">
-        <LazyImage src="/images/dadda-logo.png" alt="" fill className="object-contain animate-bounce-gentle" />
+      <div className="hero-watermark pointer-events-none absolute top-1/2 right-10 hidden h-40 w-40 -translate-y-1/2 opacity-10 xl:block">
+        <LazyImage src="/images/dadda-logo.png" alt="" fill className="object-contain" sizes="160px" />
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 h-full flex items-center">
+      <div className="relative z-10 flex h-full items-center">
         <div className="container mx-auto px-4">
           <div className="max-w-5xl">
-            {/* Animated Content */}
-            <div key={currentSlide} className="animate-fade-in-up text-white">
-              {/* Enhanced Icon with Theme-based Styling */}
+            <div key={currentSlide} className="hero-copy text-white">
               {currentSlideData.icon && (
                 <div
-                  className={`mb-8 text-white rounded-full p-5 w-fit backdrop-blur-sm border-2 border-white/30 ${
+                  className={`hero-icon mb-8 w-fit rounded-full border-2 border-white/30 p-5 text-white backdrop-blur-sm ${
                     currentSlideData.theme === "elegant"
                       ? "bg-dadda-primary/40"
                       : currentSlideData.theme === "playful"
@@ -220,32 +295,28 @@ export default function HeroCarousel() {
                 </div>
               )}
 
-              {/* Subtitle */}
-              <p className="text-lg md:text-xl mb-6 text-dadda-primary font-medium tracking-wide uppercase">
+              <p className="hero-subtitle mb-6 text-lg font-medium uppercase tracking-wide text-dadda-primary md:text-xl">
                 {currentSlideData.subtitle}
               </p>
 
-              {/* Title */}
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-8 leading-tight">
+              <h1 className="hero-title mb-8 text-5xl font-bold leading-tight md:text-7xl lg:text-8xl">
                 {currentSlideData.title}
               </h1>
 
-              {/* Description */}
-              <p className="text-xl md:text-2xl mb-10 max-w-3xl leading-relaxed text-gray-100">
+              <p className="hero-desc mb-10 max-w-3xl text-xl leading-relaxed text-gray-100 md:text-2xl">
                 {currentSlideData.description}
               </p>
 
-              {/* Enhanced CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-6">
+              <div className="flex flex-col gap-6 sm:flex-row">
                 <Link
                   href={currentSlideData.cta.primary.href}
-                  className="btn-primary text-xl px-10 py-5 bg-dadda-primary hover:bg-dadda-primary-dark shadow-2xl"
+                  className="hero-cta btn-primary bg-dadda-primary px-10 py-5 text-xl shadow-2xl hover:bg-dadda-primary-dark"
                 >
                   {currentSlideData.cta.primary.text}
                 </Link>
                 <Link
                   href={currentSlideData.cta.secondary.href}
-                  className="btn-secondary border-2 border-white text-white hover:bg-white hover:text-brown-dark text-xl px-10 py-5 backdrop-blur-sm"
+                  className="hero-cta btn-secondary border-2 border-white px-10 py-5 text-xl text-white backdrop-blur-sm hover:bg-white hover:text-brown-dark"
                 >
                   {currentSlideData.cta.secondary.text}
                 </Link>
@@ -255,10 +326,9 @@ export default function HeroCarousel() {
         </div>
       </div>
 
-      {/* Enhanced Navigation Arrows */}
       <button
         onClick={prevSlide}
-        className="absolute left-6 top-1/2 -translate-y-1/2 z-20 bg-white/20 backdrop-blur-md hover:bg-dadda-primary/80 text-white p-4 rounded-full transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-dadda-primary/50 border border-white/30"
+        className="absolute left-6 top-1/2 z-20 -translate-y-1/2 rounded-full border border-white/30 bg-white/20 p-4 text-white backdrop-blur-md transition-all duration-300 hover:scale-110 hover:bg-dadda-primary/80 focus:outline-none focus:ring-2 focus:ring-dadda-primary/50"
         aria-label="Previous slide"
         disabled={isTransitioning}
       >
@@ -267,15 +337,14 @@ export default function HeroCarousel() {
 
       <button
         onClick={nextSlide}
-        className="absolute right-6 top-1/2 -translate-y-1/2 z-20 bg-white/20 backdrop-blur-md hover:bg-dadda-primary/80 text-white p-4 rounded-full transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-dadda-primary/50 border border-white/30"
+        className="absolute right-6 top-1/2 z-20 -translate-y-1/2 rounded-full border border-white/30 bg-white/20 p-4 text-white backdrop-blur-md transition-all duration-300 hover:scale-110 hover:bg-dadda-primary/80 focus:outline-none focus:ring-2 focus:ring-dadda-primary/50"
         aria-label="Next slide"
         disabled={isTransitioning}
       >
         <ChevronRight className="h-7 w-7" />
       </button>
 
-      {/* Enhanced Dot Indicators */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex space-x-4">
+      <div className="absolute bottom-10 left-1/2 z-20 flex -translate-x-1/2 space-x-4">
         {carouselSlides.map((slide, index) => (
           <button
             key={index}
@@ -288,10 +357,10 @@ export default function HeroCarousel() {
             disabled={isTransitioning}
           >
             <div
-              className={`w-4 h-4 rounded-full transition-all duration-300 border-2 ${
+              className={`h-4 w-4 rounded-full border-2 transition-all duration-300 ${
                 index === currentSlide
-                  ? "bg-dadda-primary border-white"
-                  : "bg-white/50 hover:bg-white/75 border-white/50"
+                  ? "border-white bg-dadda-primary"
+                  : "border-white/50 bg-white/50 hover:bg-white/75"
               }`}
             />
             {index === currentSlide && (
@@ -301,38 +370,33 @@ export default function HeroCarousel() {
         ))}
       </div>
 
-      {/* Enhanced Progress Bar */}
-      <div className="absolute bottom-0 left-0 w-full h-2 bg-white/20 z-20">
+      <div className="absolute bottom-0 left-0 z-20 h-2 w-full origin-left bg-white/20">
         <div
-          className="h-full bg-gradient-to-r from-dadda-primary to-dadda-primary-light transition-all duration-300 ease-linear"
-          style={{
-            width: `${((currentSlide + 1) / carouselSlides.length) * 100}%`,
-          }}
+          ref={progressRef}
+          className="h-full w-full origin-left scale-x-0 bg-gradient-to-r from-dadda-primary to-dadda-primary-light"
         />
       </div>
 
-      {/* Enhanced Auto-play Indicator */}
-      <div className="absolute top-6 right-6 z-20">
+      <div className="absolute right-6 top-6 z-20">
         <button
           onClick={() => setIsAutoPlaying(!isAutoPlaying)}
-          className="bg-white/20 backdrop-blur-md hover:bg-dadda-primary/80 text-white p-3 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-dadda-primary/50 border border-white/30"
+          className="rounded-full border border-white/30 bg-white/20 p-3 text-white backdrop-blur-md transition-all duration-300 hover:bg-dadda-primary/80 focus:outline-none focus:ring-2 focus:ring-dadda-primary/50"
           aria-label={isAutoPlaying ? "Pause slideshow" : "Play slideshow"}
         >
           {isAutoPlaying ? (
-            <div className="w-5 h-5 flex space-x-1">
-              <div className="w-1.5 h-5 bg-white rounded-sm"></div>
-              <div className="w-1.5 h-5 bg-white rounded-sm"></div>
+            <div className="flex h-5 w-5 space-x-1">
+              <div className="h-5 w-1.5 rounded-sm bg-white"></div>
+              <div className="h-5 w-1.5 rounded-sm bg-white"></div>
             </div>
           ) : (
-            <div className="w-5 h-5 relative">
-              <div className="absolute inset-0 border-l-4 border-l-white border-y-2 border-y-transparent border-r-0 rounded-sm"></div>
+            <div className="relative h-5 w-5">
+              <div className="absolute inset-0 rounded-sm border-y-2 border-l-4 border-r-0 border-y-transparent border-l-white"></div>
             </div>
           )}
         </button>
       </div>
 
-      {/* Enhanced Slide Counter */}
-      <div className="absolute top-6 left-6 z-20 bg-white/20 backdrop-blur-md text-white px-4 py-2 rounded-full text-sm font-medium border border-white/30">
+      <div className="absolute left-6 top-6 z-20 rounded-full border border-white/30 bg-white/20 px-4 py-2 text-sm font-medium text-white backdrop-blur-md">
         {currentSlide + 1} / {carouselSlides.length}
       </div>
     </section>

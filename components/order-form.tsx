@@ -7,13 +7,14 @@ import type { PastryCategory, OrderItem, OrderDetails } from "@/lib/order-types"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from "@/components/ui/card"
 import { ShoppingCart, Send } from "lucide-react"
 import { submitOrder } from "@/app/order/action"
+import DeliveryPicker from "@/components/delivery-picker"
+import { pickupSelection, type DeliverySelection } from "@/lib/delivery"
 
 const initialOrderItemState: OrderItem = {
   pastryType: pastryCategories[0].id,
@@ -28,10 +29,9 @@ export default function OrderForm() {
     email: "",
     phone: "",
     eventDate: "",
-    deliveryOption: "pickup",
-    deliveryAddress: "",
     specialInstructions: "",
   })
+  const [delivery, setDelivery] = useState<DeliverySelection>(pickupSelection)
   const [currentOrderItem, setCurrentOrderItem] = useState<OrderItem>(initialOrderItemState)
   const [cart, setCart] = useState<OrderItem[]>([])
   const [totalPrice, setTotalPrice] = useState(0)
@@ -43,10 +43,6 @@ export default function OrderForm() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target
-    setCustomerDetails((prev) => ({ ...prev, [name]: value }))
-  }
-
-  const handleRadioChange = (name: keyof typeof customerDetails, value: string) => {
     setCustomerDetails((prev) => ({ ...prev, [name]: value }))
   }
 
@@ -158,8 +154,9 @@ export default function OrderForm() {
 
   useEffect(() => {
     const cartTotal = cart.reduce((sum, item) => sum + item.itemPrice, 0)
-    setTotalPrice(cartTotal)
-  }, [cart])
+    const fee = delivery.delivery === "delivery" ? delivery.deliveryFee : 0
+    setTotalPrice(cartTotal + fee)
+  }, [cart, delivery.delivery, delivery.deliveryFee])
 
   const addItemToCart = () => {
     if (
@@ -204,11 +201,22 @@ export default function OrderForm() {
       setFormFeedback({ type: "error", message: "Your cart is empty. Please add items before placing an order." })
       return
     }
+    if (delivery.delivery === "delivery" && delivery.deliveryFee <= 0) {
+      setFormFeedback({
+        type: "error",
+        message: "Choose a delivery address in range so we can add the R5/km fee, or switch to store pickup.",
+      })
+      return
+    }
     setIsSubmitting(true)
     setFormFeedback(null)
 
     const orderData: OrderDetails = {
       ...customerDetails,
+      deliveryOption: delivery.delivery,
+      deliveryAddress: delivery.address,
+      deliveryKm: delivery.deliveryKm,
+      deliveryFee: delivery.deliveryFee,
       items: cart,
       totalPrice: totalPrice,
       paymentMethod: "Credit Card (Simulated)",
@@ -558,35 +566,8 @@ export default function OrderForm() {
                   />
                 </div>
                 <div>
-                  <Label className="mb-2 block">Delivery Option *</Label>
-                  <RadioGroup
-                    name="deliveryOption"
-                    value={customerDetails.deliveryOption}
-                    onValueChange={(value) => handleRadioChange("deliveryOption", value)}
-                    className="flex gap-4"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="pickup" id="pickup" />
-                      <Label htmlFor="pickup">Pickup from Bakery</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="delivery" id="delivery" />
-                      <Label htmlFor="delivery">Delivery</Label>
-                    </div>
-                  </RadioGroup>
+                  <DeliveryPicker value={delivery} onChange={setDelivery} idPrefix="enquiry-delivery" />
                 </div>
-                {customerDetails.deliveryOption === "delivery" && (
-                  <div>
-                    <Label htmlFor="deliveryAddress">Delivery Address *</Label>
-                    <Textarea
-                      id="deliveryAddress"
-                      name="deliveryAddress"
-                      value={customerDetails.deliveryAddress}
-                      onChange={handleCustomerDetailsChange}
-                      required={customerDetails.deliveryOption === "delivery"}
-                    />
-                  </div>
-                )}
                 <div>
                   <Label htmlFor="specialInstructions">Special Instructions / Dietary Notes</Label>
                   <Textarea
@@ -672,10 +653,9 @@ export default function OrderForm() {
                     email: "",
                     phone: "",
                     eventDate: "",
-                    deliveryOption: "pickup",
-                    deliveryAddress: "",
                     specialInstructions: "",
                   })
+                  setDelivery(pickupSelection())
                   setFormFeedback(null) // Clear feedback
                 }}
                 className="w-full"

@@ -1,27 +1,64 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    './app/**/*.{js,ts,jsx,tsx}',
-    './components/**/*.{js,ts,jsx,tsx}',
-    './hooks/**/*.{js,ts,jsx,tsx}',
-    './lib/**/*.{js,ts,jsx,tsx}',
+    "./app/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
+    "./hooks/**/*.{js,ts,jsx,tsx}",
+    "./lib/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
       fontFamily: {
-        josefin: ['"Josefin Sans"', 'sans-serif'],
+        josefin: ['"Josefin Sans"', "sans-serif"],
+        display: ["var(--font-playfair)", "Georgia", "serif"],
+        sans: ["var(--font-montserrat)", "system-ui", "sans-serif"],
       },
       colors: {
-        'dadda-primary': '#81a969', // Example green
-        'dadda-primary-dark': '#6b8e57', // Example darker green
-        'brown-extra-dark': '#2E1A12', // Example extra dark brown
-        'brown-dark': '#4F2D20', // Example dark brown
-        'brown': '#7C4F32', // Example brown
-        'brown-medium': '#A47551', // Example medium brown
-        'brown-light': '#D2B48C', // Example light brown
-        'pink-light': '#FFE4EC', // Example light pink for backgrounds
+        "dadda-primary": "#7d562d",
+        "dadda-primary-dark": "#623f18",
+        "brown-extra-dark": "#2E1A12",
+        "brown-dark": "#2D241E",
+        brown: "#7d562d",
+        "brown-medium": "#50453b",
+        "brown-light": "#d4a373",
+        "pink-light": "#fed6d9",
+        background: "#fff8ef",
+        surface: "#fff8ef",
+        "cream-surface": "#FDFBF7",
+        "chocolate-text": "#2D241E",
+        "on-surface": "#1e1b13",
+        "on-surface-variant": "#50453b",
+        "on-primary": "#ffffff",
+        "primary-container": "#d4a373",
+        "on-primary-container": "#5b3912",
+        "surface-container": "#f5edde",
+        "surface-container-low": "#fbf3e4",
+        "surface-container-lowest": "#ffffff",
+        "surface-container-high": "#efe7d9",
+        "surface-variant": "#e9e2d3",
+        tertiary: "#914758",
+        "primary-fixed-dim": "#f0bd8b",
+        outline: "#82756a",
+        "outline-variant": "#d4c4b7",
+        "secondary-container": "#fed6d9",
+        "on-secondary-container": "#795b5e",
+        "sage-muted": "#81A969",
+        "strawberry-accent": "#D62828",
+        cream: "#fff8ef",
+      },
+      maxWidth: {
+        "container-max": "1200px",
+      },
+      spacing: {
+        "section-gap": "120px",
+        "margin-mobile": "16px",
+        "margin-desktop": "64px",
+        gutter: "24px",
+      },
+      boxShadow: {
+        pastry: "0 18px 50px rgba(125, 86, 45, 0.12)",
       },
     },
   },
   plugins: [],
-} 
+}

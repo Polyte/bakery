@@ -1,200 +1,400 @@
 import Link from "next/link"
-import { ArrowRight, Heart, Cake, Users, Gift } from "lucide-react"
-import TestimonialCard from "@/components/testimonial-card"
-import EventCategoryCard from "@/components/event-category-card"
-import FeaturedCakeCard from "@/components/featured-cake-card"
-import HeroCarousel from "@/components/hero-carousel"
+import { Suspense } from "react"
+import { ArrowRight } from "lucide-react"
+import HomeHero from "@/components/home-hero"
+import HomeOrderPaths from "@/components/home-order-paths"
+import HomePickup from "@/components/home-pickup"
+import HomeProcess from "@/components/home-process"
 import LazyImage from "@/components/lazy-image"
+import ParallaxCta from "@/components/parallax-cta"
+import SeoGraph from "@/components/seo-graph"
+import SeoFaq from "@/components/seo-faq"
+import InstagramFeed, { InstagramFeedFallback } from "@/components/instagram-feed"
+import { formatRand } from "@/lib/cake-order"
+import { CAKE_CATEGORIES, CAKE_CATEGORY_LIST } from "@/lib/cakes"
+import { CUPCAKES, CUPCAKES_FROM_PRICE } from "@/lib/cupcakes"
+import { POPSTICLES, POPSTICLES_FROM_PRICE } from "@/lib/popsticles"
+import { TREATS } from "@/lib/treats"
+import { pageMetadata } from "@/lib/seo"
+
+export const metadata = pageMetadata("/")
+
+const cakesFromPrice = Math.min(...CAKE_CATEGORY_LIST.map((category) => category.fromPrice))
+
+const categories = [
+  {
+    title: "Celebration Cakes",
+    description: `Wedding, birthday, and children's cakes from ${formatRand(cakesFromPrice)}.`,
+    image: "/cakes/wedding.jpg",
+    alt: "Four-tier garden berry wedding cake from Dadda's Confectionery",
+    href: "/cakes",
+    cta: "Browse cakes",
+    shape: "organic",
+  },
+  {
+    title: "Small Treats",
+    description: `Cupcakes from ${formatRand(CUPCAKES_FROM_PRICE)}, scones, and Popsticles.`,
+    image: "/videos/cupcakes-blue.jpg",
+    alt: "Blueberry-frosted cupcakes baked in Amandasig",
+    href: "/treats",
+    cta: "Shop treats",
+    shape: "circle",
+    offset: true,
+  },
+  {
+    title: "Custom Bakes",
+    description: "Name, flavour, and finish set for your Pretoria date.",
+    image: "/cakes/cake1.jpg",
+    alt: "Custom message barrel cake with gold edges and macarons",
+    href: "/order",
+    cta: "Start an order",
+    shape: "organic",
+    delay: true,
+  },
+]
+
+const featuredCakes = [
+  {
+    product: CAKE_CATEGORIES.wedding.products[1],
+    href: "/cakes/wedding",
+  },
+  {
+    product: CAKE_CATEGORIES.birthday.products[2],
+    href: "/cakes/birthday",
+  },
+  {
+    product: CAKE_CATEGORIES.children.products[2],
+    href: "/cakes/children",
+  },
+]
+
+const featuredTreats = [
+  {
+    title: CUPCAKES[0].name,
+    description: CUPCAKES[0].description,
+    price: CUPCAKES[0].price,
+    image: CUPCAKES[0].image,
+    href: "/treats/cupcakes",
+    badge: CUPCAKES[0].note,
+  },
+  {
+    title: TREATS[0].name,
+    description: TREATS[0].description,
+    price: TREATS[0].price,
+    image: TREATS[0].image,
+    href: "/treats",
+    badge: TREATS[0].note,
+  },
+  {
+    title: `${POPSTICLES[0].name} Popsticle`,
+    description: POPSTICLES[0].description,
+    price: POPSTICLES[0].price,
+    image: POPSTICLES[0].image,
+    href: "/treats/popsticles",
+    badge: POPSTICLES[0].note,
+  },
+]
+
+const autumnSpice = CUPCAKES.find((item) => item.id === "cupcake-autumn") ?? CUPCAKES[6]
+
+const celebrations = [
+  {
+    src: "/cakes/cake15.jpg",
+    alt: "Red velvet LOVE cake and cupcakes boxed at Dadda's Confectionery",
+    offset: false,
+  },
+  {
+    src: "/cakes/cake9.jpg",
+    alt: "Gold letter birthday cake baked in Amandasig, Pretoria",
+    offset: true,
+  },
+  {
+    src: "/images/cake-raspberry.webp",
+    alt: "Chocolate raspberry cake with pistachios from Dadda's Pretoria kitchen",
+    offset: false,
+  },
+]
 
 export default function Home() {
   return (
-    <>
-      {/* Hero Carousel */}
-      <HeroCarousel />
+    <div className="flex w-full flex-col overflow-hidden bg-background">
+      <SeoGraph path="/" />
+      <HomeHero />
+      <HomeOrderPaths />
 
-      {/* Event Categories */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="section-title text-center">Cakes for Every Celebration</h2>
-          <p className="section-subtitle text-center">
-            From intimate gatherings to grand celebrations, we create custom cakes that perfectly capture the essence of
-            your special moments.
-          </p>
+      <section className="relative w-full bg-surface py-section-gap" id="treats">
+        <div className="relative z-10 mx-auto max-w-container-max px-margin-mobile lg:px-margin-desktop">
+          <div className="mx-auto mb-16 max-w-2xl text-center" data-animate="fade-up">
+            <h2 className="section-title mb-4">Baked in Amandasig for Pretoria tables</h2>
+            <p className="mb-4 text-base text-on-surface-variant">
+              Custom cakes, boxed treats, and from-scratch orders — collected from Villa Lanta Estate or delivered by
+              arrangement.
+            </p>
+            <div className="mx-auto h-1 w-16 rounded-full bg-dadda-primary" />
+          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mt-12">
-            <EventCategoryCard
-              title="Wedding"
-              image="/cakes/wedding.jpg"
-              href="/gallery"
-              icon={<Heart className="h-6 w-6" />}
-            />
-            <EventCategoryCard
-              title="Birthday"
-              image="/cakes/cake9.jpg"
-              href="/gallery"
-              icon={<Cake className="h-6 w-6" />}
-            />
-            <EventCategoryCard
-              title="Anniversary"
-              image="/cakes/cake1.jpg"
-              href="/gallery"
-              icon={<Gift className="h-6 w-6" />}
-            />
-            <EventCategoryCard
-              title="Children's Party"
-              image="/cakes/cake17.jpg"
-              href="/gallery"
-              icon={<Users className="h-6 w-6" />}
-            />
-            <EventCategoryCard
-              title="Corporate Events"
-              image="/cakes/cake23.jpg"
-              href="/gallery"
-              icon={<Users className="h-6 w-6" />}
-            />
+          <div className="grid grid-cols-1 gap-12 px-4 md:grid-cols-3 lg:gap-16 lg:px-12" data-stagger>
+            {categories.map((category) => (
+              <div
+                key={category.title}
+                className={`group flex flex-col items-center text-center ${category.offset ? "md:translate-y-8" : ""}`}
+                data-stagger-item
+              >
+                <Link href={category.href} prefetch className="w-full max-w-[280px]">
+                  <div
+                    className={`relative mb-6 aspect-square w-full overflow-hidden border-4 border-surface bg-surface-container shadow-lg group-hover:shadow-pastry ${
+                      category.shape === "circle" ? "rounded-full" : "organic-shape"
+                    }`}
+                    style={category.delay ? { animationDelay: "-4s" } : undefined}
+                  >
+                    <LazyImage
+                      src={category.image}
+                      alt={category.alt}
+                      fill
+                      className="object-cover"
+                      sizes="(min-width: 768px) 280px, 80vw"
+                    />
+                  </div>
+                </Link>
+                <h3 className="mb-2 font-display text-2xl font-semibold text-chocolate-text">{category.title}</h3>
+                <p className="mb-3 max-w-xs text-sm text-on-surface-variant">{category.description}</p>
+                <Link
+                  href={category.href}
+                  prefetch
+                  className="inline-flex items-center text-xs font-semibold uppercase tracking-wider text-dadda-primary hover:text-primary-container"
+                >
+                  {category.cta} <ArrowRight className="ml-1 h-4 w-4" />
+                </Link>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Featured Cakes */}
-      <section className="py-20 bg-cream">
-        <div className="container mx-auto px-4">
-          <h2 className="section-title text-center">Our <span style={{ color: "#81a969" }}>Signature</span> Creations</h2>
-          <p className="section-subtitle text-center">
-            Discover our most beloved cake designs that have brought joy to countless celebrations.
-          </p>
+      <ParallaxCta
+        src="/images/mini-iced-cakes.webp"
+        alt="Mini iced cakes with dripping icing on a dark wooden board"
+        headline="The icing is calling."
+        body="Mini cakes, dripping ganache, and celebration-ready sweetness — baked to order in Pretoria, never off the shelf."
+        ctaLabel="Order Now"
+        ctaHref="/order"
+        variant="band"
+      />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
-            <FeaturedCakeCard
-              title="Garden Rose Wedding Cake"
-              description="Three-tier vanilla sponge with buttercream roses and delicate sugar flowers."
-              image="/cakes/cake21.jpg"
-              category="Wedding"
-              price="From R3800"
-              href="/gallery"
-            />
-            <FeaturedCakeCard
-              title="Chocolate Cherry Delight"
-              description="Rich chocolate cake with fresh cherries and ganache drip, topped with a signature cherry."
-              image="/cakes/cake9.jpg"
-              category="Birthday"
-              price="From R850"
-              href="/gallery"
-            />
-            <FeaturedCakeCard
-              title="Enchanted Castle Cake"
-              description="Magical castle cake with turrets and flags, perfect for little princesses and princes."
-              image="/cakes/cake25.jpg"
-              category="Children's Party"
-              price="From R1200"
-              href="/gallery"
-            />
-          </div>
-
-          <div className="text-center mt-12">
-            <Link href="/gallery" className="btn-primary inline-flex items-center">
-              View All Cakes <ArrowRight className="ml-2 h-5 w-5" />
+      <section className="w-full bg-cream-surface py-section-gap">
+        <div className="mx-auto max-w-container-max px-margin-mobile lg:px-margin-desktop">
+          <div className="mb-16 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+            <div className="max-w-xl" data-animate="fade-up">
+              <h2 className="section-title">Cakes from this kitchen</h2>
+              <p className="text-base text-on-surface-variant">
+                Real cakes from the catalog — wedding tiers, birthday barrels, and kids' cakes baked in Amandasig.
+              </p>
+            </div>
+            <Link
+              href="/cakes"
+              prefetch
+              className="inline-flex items-center gap-2 whitespace-nowrap text-sm font-semibold uppercase tracking-wider text-dadda-primary hover:text-primary-container"
+              data-animate="fade-up"
+            >
+              All cakes <ArrowRight className="h-5 w-5" />
             </Link>
           </div>
-        </div>
-      </section>
 
-      {/* About Section */}
-      <section className="py-20 bg-dadda-primary/10">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="relative h-[400px] md:h-[500px] rounded-2xl overflow-hidden">
-              <LazyImage
-                src="/images/company-profile-5.png"
-                alt="About Dadda's Confectionery"
-                fill
-                className="object-cover"
-              />
-            </div>
-            <div>
-              <h2 className="section-title"><span style={{ color: "#81a969" }}>A Legacy of Sweet</span> Traditions</h2>
-              <p className="text-lg mb-6">
-                Dadda's Confectionery is a premier bakery located in the heart of Pretoria, South Africa. Established
-                with a passion for creating delicious and visually stunning baked goods, we cater to a wide array of
-                occasions, ensuring every celebration is unforgettable.
-              </p>
-              <p className="text-lg mb-8">
-                Our mission is to bring joy and sweetness to every occasion with our meticulously crafted confections.
-                We strive to exceed our customers' expectations through innovation, quality ingredients, and
-                personalized service.
-              </p>
-              <Link href="/about" className="btn-primary inline-flex items-center">
-                Our Story <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="section-title text-center">Sweet Words from Our Customers</h2>
-          <p className="section-subtitle text-center">
-            Nothing makes us happier than hearing about the joy our cakes bring to your celebrations.
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
-            <TestimonialCard
-              name="Sarah & Michael Johnson"
-              role="Wedding Couple"
-              image="/cakes/happy-couple-park.png"
-              rating={5}
-              testimonial="Our wedding cake from Dadda's was absolutely perfect! Not only was it the most beautiful cake we'd ever seen, but it tasted incredible. Every guest asked where we got it. Thank you for making our day so special!"
-            />
-            <TestimonialCard
-              name="Maria Rodriguez"
-              role="Mother"
-              image="/cakes/smiling-mother.png"
-              rating={5}
-              testimonial="The princess castle cake for my daughter's 6th birthday was magical! The attention to detail was amazing, and my little girl's face lit up when she saw it. Dadda's truly bakes with love."
-            />
-            <TestimonialCard
-              name="James Thompson"
-              role="Corporate Client"
-              image="/cakes/professional-client.png"
-              rating={5}
-              testimonial="We've been ordering from Dadda's for all our corporate events for three years now. Their professionalism, quality, and reliability are unmatched. They always deliver exactly what we need, when we need it."
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 bg-brown-dark text-white">
-        <div className="container mx-auto px-4 text-center">
-          <div className="max-w-3xl mx-auto">
-            <LazyImage
-              src="/images/dadda-logo.png"
-              alt="Dadda's Confectionery"
-              width={80}
-              height={80}
-              className="h-16 w-16 object-contain mx-auto mb-6"
-            />
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Ready to Create Sweet Memories?</h2>
-            <p className="text-xl mb-8">
-              Let us bring your cake dreams to life. Contact us today to discuss your custom cake requirements and let's
-              create something truly special together.
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Link href="/order" className="btn-primary bg-dadda-primary hover:bg-dadda-primary-dark">
-                Start Your Order
-              </Link>
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3" data-stagger>
+            {featuredCakes.map(({ product, href }) => (
               <Link
-                href="/gallery"
-                className="btn-secondary border-white text-white hover:bg-white hover:text-brown-dark"
+                key={product.id}
+                href={href}
+                prefetch
+                className="group flex flex-col rounded-3xl border border-outline-variant/30 bg-surface p-6 shadow-sm hover:shadow-pastry"
+                data-stagger-item
               >
-                View Our Gallery
+                <div className="relative mb-6 aspect-[4/3] w-full overflow-hidden rounded-2xl bg-surface-container">
+                  <LazyImage
+                    src={product.image}
+                    alt={product.name}
+                    fill
+                    className="object-cover"
+                    sizes="(min-width: 768px) 33vw, 100vw"
+                  />
+                  {product.note && (
+                    <div className="absolute right-4 top-4 rounded-full bg-surface/90 px-3 py-1 text-xs font-medium text-dadda-primary shadow-sm backdrop-blur">
+                      {product.note}
+                    </div>
+                  )}
+                </div>
+                <div className="flex flex-col items-center gap-2 text-center">
+                  <h3 className="font-display text-[22px] font-semibold text-chocolate-text">{product.name}</h3>
+                  <p className="mb-2 text-sm text-on-surface-variant">{product.description}</p>
+                  <p className="text-sm font-semibold uppercase tracking-widest text-dadda-primary">
+                    From {formatRand(product.price)}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="w-full bg-surface py-section-gap">
+        <div className="mx-auto max-w-container-max px-margin-mobile lg:px-margin-desktop">
+          <div className="mb-16 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+            <div className="max-w-xl" data-animate="fade-up">
+              <h2 className="section-title">Cupcakes, scones &amp; Popsticles</h2>
+              <p className="text-base text-on-surface-variant">
+                Boxed for Pretoria pickup. Cupcakes from {formatRand(CUPCAKES_FROM_PRICE)}, Popsticles from{" "}
+                {formatRand(POPSTICLES_FROM_PRICE)}.
+              </p>
+            </div>
+            <Link
+              href="/treats"
+              prefetch
+              className="inline-flex items-center gap-2 whitespace-nowrap text-sm font-semibold uppercase tracking-wider text-dadda-primary hover:text-primary-container"
+              data-animate="fade-up"
+            >
+              All treats <ArrowRight className="h-5 w-5" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3" data-stagger>
+            {featuredTreats.map((item) => (
+              <Link
+                key={item.title}
+                href={item.href}
+                prefetch
+                className="group flex flex-col rounded-3xl border border-outline-variant/30 bg-cream-surface p-6 shadow-sm hover:shadow-pastry"
+                data-stagger-item
+              >
+                <div className="relative mb-6 aspect-[4/3] w-full overflow-hidden rounded-2xl bg-surface-container">
+                  <LazyImage
+                    src={item.image}
+                    alt={item.title}
+                    fill
+                    className="object-cover"
+                    sizes="(min-width: 768px) 33vw, 100vw"
+                  />
+                  {item.badge && (
+                    <div className="absolute right-4 top-4 rounded-full bg-secondary-container px-3 py-1 text-xs font-medium text-on-secondary-container shadow-sm">
+                      {item.badge}
+                    </div>
+                  )}
+                </div>
+                <div className="flex flex-col items-center gap-2 text-center">
+                  <h3 className="font-display text-[22px] font-semibold text-chocolate-text">{item.title}</h3>
+                  <p className="mb-2 text-sm text-on-surface-variant">{item.description}</p>
+                  <p className="text-sm font-semibold uppercase tracking-widest text-dadda-primary">
+                    {formatRand(item.price)}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="w-full bg-surface-container-low py-section-gap">
+        <div className="mx-auto max-w-container-max px-margin-mobile lg:px-margin-desktop">
+          <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
+            <div className="order-2 flex flex-col items-start lg:order-1" data-animate="fade-left">
+              <span className="mb-4 text-sm font-semibold uppercase tracking-widest text-dadda-primary">
+                Seasonal batch
+              </span>
+              <h2 className="section-title mb-6">{autumnSpice.name} cupcakes</h2>
+              <p className="mb-8 text-lg text-on-surface-variant">{autumnSpice.description}</p>
+              <p className="mb-8 text-sm font-semibold uppercase tracking-widest text-dadda-primary">
+                From {formatRand(autumnSpice.price)}
+              </p>
+              <Link href="/treats/cupcakes" prefetch className="btn-primary">
+                Order cupcakes
+              </Link>
+            </div>
+            <div className="order-1 lg:order-2" data-animate="fade-right">
+              <div className="relative mx-auto aspect-[3/4] w-full max-w-md overflow-hidden rounded-3xl shadow-2xl">
+                <LazyImage
+                  src={autumnSpice.image}
+                  alt={`${autumnSpice.name} cupcakes from Dadda's Confectionery in Pretoria`}
+                  fill
+                  className="object-cover"
+                  sizes="(min-width: 1024px) 28rem, 100vw"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <HomeProcess />
+
+      <section className="w-full bg-surface py-section-gap">
+        <div className="mx-auto max-w-container-max px-margin-mobile lg:px-margin-desktop">
+          <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-2">
+            <div data-animate="fade-right">
+              <div className="relative aspect-video w-full overflow-hidden rounded-[40px] shadow-xl lg:aspect-square">
+                <LazyImage
+                  src="/images/cake-croissants.webp"
+                  alt="Naked berry cake beside croissants and cream from Dadda's Pretoria kitchen"
+                  fill
+                  className="object-cover"
+                  sizes="(min-width: 1024px) 50vw, 100vw"
+                />
+              </div>
+            </div>
+            <div className="flex flex-col items-start" data-animate="fade-left">
+              <h2 className="section-title mb-6">The Dadda&apos;s Story</h2>
+              <p className="mb-6 text-lg text-on-surface-variant">
+                Since 2018 we have baked from 6814 Strawberry Street, Villa Lanta Estate, Amandasig. Every sponge is
+                mixed for the day it will be eaten — not pulled from a freezer.
+              </p>
+              <p className="text-base text-on-surface-variant">
+                Pretoria birthdays, Akasia weddings, office tables in Pretoria North: the same kitchen, the same from-scratch
+                method, packed for the drive home.
+              </p>
+              <Link
+                href="/about"
+                prefetch
+                className="mt-8 inline-flex items-center text-sm font-semibold uppercase tracking-wider text-dadda-primary"
+              >
+                Read Our Story <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </div>
           </div>
         </div>
       </section>
-    </>
+
+      <HomePickup />
+
+      <section className="w-full bg-cream-surface py-section-gap">
+        <div className="mx-auto max-w-container-max px-margin-mobile lg:px-margin-desktop">
+          <div className="mx-auto mb-16 max-w-2xl text-center" data-animate="fade-up">
+            <h2 className="section-title mb-4">From the Amandasig kitchen</h2>
+            <p className="text-base text-on-surface-variant">
+              Cakes we actually bake — anniversary boxes, birthday barrels, and chocolate raspberry stands.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3" data-stagger>
+            {celebrations.map((item) => (
+              <div
+                key={item.src}
+                className={`relative h-80 overflow-hidden rounded-2xl shadow-md ${item.offset ? "md:translate-y-8" : ""}`}
+                data-stagger-item
+              >
+                <LazyImage
+                  src={item.src}
+                  alt={item.alt}
+                  fill
+                  className="object-cover"
+                  sizes="(min-width: 768px) 33vw, 100vw"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <SeoFaq path="/" />
+      <Suspense fallback={<InstagramFeedFallback />}>
+        <InstagramFeed />
+      </Suspense>
+    </div>
   )
 }

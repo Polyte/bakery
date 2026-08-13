@@ -30,7 +30,7 @@ export default function FeaturedCakeCard({ title, description, image, category, 
   }
 
   return (
-    <div className="card overflow-hidden h-full flex flex-col group">
+    <div className="card overflow-hidden h-full flex flex-col group" data-stagger-item>
       <div className="relative h-64 overflow-hidden">
         <LazyImage
           src={cakeImage}

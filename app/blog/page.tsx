@@ -1,5 +1,7 @@
 import Link from "next/link"
-import LazyImage from "@/components/lazy-image"
+import { pageMetadata } from "@/lib/seo"
+
+export const metadata = pageMetadata("/blog")
 
 export default function GalleryRedirectPage() {
   return (

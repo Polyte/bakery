@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form"
 import { useState } from "react"
-import LazyImage from "@/components/lazy-image"
+import ParallaxCta from "@/components/parallax-cta"
 import { MapPin, Phone, Mail, Clock, Send } from "lucide-react"
 
 type FormData = {
@@ -60,22 +60,26 @@ export default function ContactPage() {
 
   return (
     <>
-      {/* Page Header */}
-      <section className="pt-32 pb-16 bg-dadda-green-light">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Contact Us</h1>
-          <p className="text-xl max-w-2xl mx-auto">
-            Ready to create your dream cake? Get in touch with us to discuss your custom cake requirements.
-          </p>
-        </div>
-      </section>
+      <ParallaxCta
+        src="/images/chocolate-log.webp"
+        alt="Chocolate log cake and pavlovas on a dessert display"
+        headline="Contact Dadda's bakery in Pretoria"
+        body="Tell us about your event, or skip ahead and start an order. Pretoria's custom cakes and treats, made with love."
+        ctaLabel="Get in Touch"
+        ctaHref="#contact-form"
+        secondaryLabel="Order Now"
+        secondaryHref="/order"
+        variant="header"
+        headingAs="h1"
+        priority
+      />
 
       {/* Contact Section */}
-      <section className="py-16 bg-cream">
+      <section id="contact-form" className="scroll-mt-28 py-16 bg-cream">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-12">
             {/* Contact Form */}
-            <div className="bg-white p-8 rounded-2xl shadow-md">
+            <div className="bg-white p-8 rounded-2xl shadow-md" data-animate="fade-right">
               <h2 className="text-3xl font-bold mb-6 text-brown-dark">Tell Us About Your Event</h2>
               
               {status && (
@@ -249,8 +253,7 @@ export default function ContactPage() {
               </form>
             </div>
 
-            {/* Contact Information */}
-            <div>
+            <div data-animate="fade-left">
               <h2 className="text-3xl font-bold mb-6 text-brown-dark">Get In Touch</h2>
               <div className="space-y-6">
                 <div className="flex items-start">

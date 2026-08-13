@@ -1,8 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import Link from "next/link"
 import LazyImage from "@/components/lazy-image"
+import ParallaxCta from "@/components/parallax-cta"
+import { gsap, useGSAP } from "@/lib/gsap"
 
 export type GalleryItem = {
   id: number
@@ -21,6 +23,7 @@ export default function GalleryClient({
 }) {
   const [selectedCategory, setSelectedCategory] = useState<string>("All")
   const [selectedImage, setSelectedImage] = useState<number | null>(null)
+  const gridRef = useRef<HTMLDivElement>(null)
 
   const filteredItems =
     selectedCategory === "All" ? items : items.filter((item) => item.category === selectedCategory)
@@ -37,23 +40,51 @@ export default function GalleryClient({
 
   const selectedImageData = selectedImage !== null ? items.find((i) => i.id === selectedImage) : null
 
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia()
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        gsap.set(".gallery-item", { autoAlpha: 1, y: 0, scale: 1 })
+      })
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.fromTo(
+          ".gallery-item",
+          { autoAlpha: 1, y: 16, scale: 0.98 },
+          {
+            autoAlpha: 1,
+            y: 0,
+            scale: 1,
+            stagger: 0.06,
+            duration: 0.5,
+            ease: "power2.out",
+            clearProps: "transform",
+          },
+        )
+      })
+      return () => mm.revert()
+    },
+    { scope: gridRef, dependencies: [selectedCategory], revertOnUpdate: true },
+  )
+
   return (
     <>
-      {/* Page Header */}
-      <section className="pt-32 pb-16 bg-dadda-green-light">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Our Cake Gallery</h1>
-          <p className="text-xl max-w-2xl mx-auto">
-            Browse our portfolio of custom cake creations and confections for various events and celebrations.
-          </p>
-        </div>
-      </section>
+      <ParallaxCta
+        src="/images/cupcakes-autumn.webp"
+        alt="Colourful frosted cupcakes in orange, yellow, and red autumn tones"
+        headline="Custom cake gallery in Pretoria"
+        body="Wedding cakes, birthday cakes, and custom finishes from Dadda's Amandasig kitchen — then order a cake that is yours alone."
+        ctaLabel="Order a Custom Cake"
+        ctaHref="/order"
+        variant="header"
+        headingAs="h1"
+        priority
+      />
 
       {/* Gallery Section */}
       <section className="py-16 bg-cream">
         <div className="container mx-auto px-4">
           {/* Category Filters */}
-          <div className="flex flex-wrap justify-center gap-4 mb-12">
+          <div className="flex flex-wrap justify-center gap-4 mb-12" data-stagger>
             {categories.map((category) => (
               <button
                 key={category}
@@ -63,6 +94,7 @@ export default function GalleryClient({
                     ? "bg-dadda-green text-brown-dark shadow-lg"
                     : "bg-white text-brown-dark hover:bg-dadda-green-light border border-dadda-green"
                 }`}
+                data-stagger-item
               >
                 {category}
               </button>
@@ -70,11 +102,11 @@ export default function GalleryClient({
           </div>
 
           {/* Gallery Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {filteredItems.map((item) => (
               <div
                 key={item.id}
-                className="relative aspect-square overflow-hidden rounded-xl cursor-pointer group"
+                className="gallery-item relative aspect-square overflow-hidden rounded-xl cursor-pointer group"
                 onClick={() => openModal(item.id)}
               >
                 <LazyImage

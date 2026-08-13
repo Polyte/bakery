@@ -11,7 +11,7 @@ interface TestimonialCardProps {
 
 export default function TestimonialCard({ name, role, image, rating, testimonial }: TestimonialCardProps) {
   return (
-    <div className="card p-6 flex flex-col h-full">
+    <div className="card p-6 flex flex-col h-full" data-stagger-item>
       <div className="flex items-center mb-4">
         <div className="relative w-12 h-12 rounded-full overflow-hidden mr-4">
           <LazyImage // Using LazyImage

@@ -12,8 +12,13 @@ export async function submitOrder(orderDetails: OrderDetails): Promise<OrderResp
   if (orderDetails.items.length === 0) {
     return { success: false, message: "Cannot place an order with an empty cart." }
   }
-  if (orderDetails.deliveryOption === "delivery" && !orderDetails.deliveryAddress) {
-    return { success: false, message: "Delivery address is required for delivery orders. Please go back and add it." }
+  if (orderDetails.deliveryOption === "delivery") {
+    if (!orderDetails.deliveryAddress) {
+      return { success: false, message: "Delivery address is required for delivery orders. Please go back and add it." }
+    }
+    if (!orderDetails.deliveryFee || orderDetails.deliveryFee <= 0) {
+      return { success: false, message: "Choose a delivery address in range so we can add the R5/km fee, or switch to pickup." }
+    }
   }
   // Validate email format (basic)
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/

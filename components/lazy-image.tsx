@@ -12,6 +12,7 @@ interface LazyImageProps {
   className?: string
   priority?: boolean
   sizes?: string
+  objectPosition?: string
 }
 
 export default function LazyImage({
@@ -23,6 +24,7 @@ export default function LazyImage({
   className = "",
   priority = false,
   sizes,
+  objectPosition,
 }: LazyImageProps) {
   const [isLoaded, setIsLoaded] = useState(false)
   const [isInView, setIsInView] = useState(false)
@@ -41,7 +43,7 @@ export default function LazyImage({
           observer.disconnect()
         }
       },
-      { threshold: 0.1 }, // Trigger when 10% of the image is visible
+      { rootMargin: "200px 0px", threshold: 0.01 },
     )
 
     if (imgRef.current) {
@@ -80,7 +82,10 @@ export default function LazyImage({
           height={fill ? undefined : height}
           fill={fill}
           sizes={sizes}
+          loading={priority ? "eager" : "lazy"}
+          decoding="async"
           className={`transition-opacity duration-500 ${isLoaded ? "opacity-100" : "opacity-0"} ${className}`}
+          style={objectPosition ? { objectPosition } : undefined}
           onLoad={() => setIsLoaded(true)}
           onError={() => {
             setIsLoaded(true)
