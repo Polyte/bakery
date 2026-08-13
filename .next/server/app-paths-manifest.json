@@ -1,0 +1,6 @@
+{
+  "/api/admin/orders/[id]/route": "app/api/admin/orders/[id]/route.js",
+  "/manifest.webmanifest/route": "app/manifest.webmanifest/route.js",
+  "/page": "app/page.js",
+  "/admin/(dashboard)/orders/[id]/page": "app/admin/(dashboard)/orders/[id]/page.js"
+}

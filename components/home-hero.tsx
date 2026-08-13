@@ -4,7 +4,6 @@ import { useRef, useState } from "react"
 import Link from "next/link"
 import { Cake, ChevronLeft, ChevronRight, Pause, Play } from "lucide-react"
 import { gsap, useGSAP } from "@/lib/gsap"
-import { onIntroComplete } from "@/lib/intro"
 
 const IMAGE_DWELL_MS = 7000
 
@@ -81,7 +80,6 @@ export default function HomeHero() {
   useGSAP(
     (_context, contextSafe) => {
       const slides = gsap.utils.toArray<SlideEl>(".hero-slide")
-      const copies = gsap.utils.toArray<HTMLElement>(".hero-copy-slide")
       if (!slides.length) return
 
       const clearDwell = () => {
@@ -111,8 +109,6 @@ export default function HomeHero() {
 
       gsap.set(slides, { autoAlpha: 0, scale: 1.06 })
       gsap.set(slides[0], { autoAlpha: 1, scale: 1 })
-      gsap.set(copies, { autoAlpha: 0, y: 0 })
-      gsap.set(copies[0], { autoAlpha: 1, y: 0 })
       playClip(slides[0])
 
       const crossfadeTo = contextSafe((next: number) => {
@@ -123,16 +119,14 @@ export default function HomeHero() {
         clearDwell()
         const outgoing = slides[currentIndex]
         const incoming = slides[next]
-        const outgoingCopy = copies[currentIndex]
-        const incomingCopy = copies[next]
         const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
 
         playClip(incoming)
+        indexRef.current = next
+        setCurrent(next)
 
         const finish = () => {
           if (outgoing instanceof HTMLVideoElement) outgoing.pause()
-          indexRef.current = next
-          setCurrent(next)
           transitioningRef.current = false
           scheduleImageAdvance(next)
         }
@@ -140,8 +134,6 @@ export default function HomeHero() {
         if (reduceMotion) {
           gsap.set(outgoing, { autoAlpha: 0, scale: 1 })
           gsap.set(incoming, { autoAlpha: 1, scale: 1 })
-          gsap.set(outgoingCopy, { autoAlpha: 0, y: 0 })
-          gsap.set(incomingCopy, { autoAlpha: 1, y: 0 })
           finish()
           return
         }
@@ -153,8 +145,6 @@ export default function HomeHero() {
           })
           .to(outgoing, { autoAlpha: 0, scale: 1.08 }, 0)
           .fromTo(incoming, { autoAlpha: 0, scale: 1.08 }, { autoAlpha: 1, scale: 1 }, 0)
-          .to(outgoingCopy, { autoAlpha: 0, y: -16 }, 0)
-          .fromTo(incomingCopy, { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0 }, 0)
       })
 
       goToRef.current = crossfadeTo
@@ -169,8 +159,18 @@ export default function HomeHero() {
         crossfadeTo((indexRef.current + 1) % slides.length)
       }
 
+      const onEnded = (event: Event) => {
+        const video = event.currentTarget as HTMLVideoElement
+        const i = slides.indexOf(video)
+        if (i !== indexRef.current || transitioningRef.current || !autoPlayRef.current) return
+        crossfadeTo((indexRef.current + 1) % slides.length)
+      }
+
       slides.forEach((el) => {
-        if (el instanceof HTMLVideoElement) el.addEventListener("timeupdate", onTimeUpdate)
+        if (el instanceof HTMLVideoElement) {
+          el.addEventListener("timeupdate", onTimeUpdate)
+          el.addEventListener("ended", onEnded)
+        }
       })
 
       return () => {
@@ -178,6 +178,7 @@ export default function HomeHero() {
         slides.forEach((el) => {
           if (el instanceof HTMLVideoElement) {
             el.removeEventListener("timeupdate", onTimeUpdate)
+            el.removeEventListener("ended", onEnded)
             el.pause()
           }
         })
@@ -187,17 +188,10 @@ export default function HomeHero() {
   )
 
   useGSAP(
-    (_context, contextSafe) => {
-      const first = ".hero-copy-slide:first-child"
-      gsap.set(`${first} > *`, { autoAlpha: 1, y: 0, scale: 1 })
-
-      const play = contextSafe(() => {
-        gsap.set(`${first} > *`, { autoAlpha: 1, y: 0, scale: 1 })
-      })
-
-      return onIntroComplete(play)
+    () => {
+      gsap.set(".hero-copy-slide > *", { autoAlpha: 1, y: 0, scale: 1 })
     },
-    { scope: container },
+    { scope: container, dependencies: [current] },
   )
 
   const goTo = (next: number) => {
@@ -231,6 +225,8 @@ export default function HomeHero() {
     }
   }
 
+  const activeSlide = heroSlides[current]
+
   return (
     <section
       ref={container}
@@ -243,7 +239,9 @@ export default function HomeHero() {
           slide.type === "video" ? (
             <video
               key={slide.src}
-              className="hero-slide absolute inset-0 h-full w-full object-cover will-change-[opacity,transform]"
+              className={`hero-slide absolute inset-0 h-full w-full object-cover will-change-[opacity,transform] ${
+                index === 0 ? "" : "opacity-0"
+              }`}
               src={slide.src}
               muted
               playsInline
@@ -251,18 +249,18 @@ export default function HomeHero() {
               preload={index === 0 ? "auto" : "metadata"}
               aria-label={slide.label}
               aria-hidden={index !== current}
-              style={{ opacity: index === 0 ? 1 : 0 }}
             />
           ) : (
             <img
               key={slide.src}
-              className="hero-slide absolute inset-0 h-full w-full object-cover will-change-[opacity,transform]"
+              className={`hero-slide absolute inset-0 h-full w-full object-cover will-change-[opacity,transform] ${
+                index === 0 ? "" : "opacity-0"
+              }`}
               src={slide.src}
               alt={slide.label}
-              loading="lazy"
+              loading={index === 0 ? "eager" : "lazy"}
               decoding="async"
               aria-hidden={index !== current}
-              style={{ opacity: index === 0 ? 1 : 0 }}
             />
           ),
         )}
@@ -274,50 +272,42 @@ export default function HomeHero() {
           className="hero-copy relative flex min-h-[28rem] max-w-2xl flex-col items-start pt-20 lg:min-h-[32rem]"
           aria-live="polite"
         >
-          {heroSlides.map((slide, index) => (
-            <div
-              key={slide.src}
-              className="hero-copy-slide absolute left-0 right-0 top-20 flex w-full max-w-2xl flex-col items-start will-change-[opacity,transform]"
-              aria-hidden={index !== current}
-            >
-              <div className="hero-badge mb-6 inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-4 py-2 shadow-sm backdrop-blur-sm">
-                <Cake className="h-[18px] w-[18px] text-white" />
-                <span className="text-xs font-medium uppercase tracking-widest text-white">{slide.badge}</span>
-              </div>
-              {index === 0 ? (
-                <h1 className="hero-title mb-6 font-display text-5xl font-bold leading-tight text-white drop-shadow-md lg:text-[64px] lg:leading-[72px]">
-                  {slide.title}
-                  <br />
-                  <span className="font-normal italic">{slide.italic}</span>
-                </h1>
-              ) : (
-                <p className="hero-title mb-6 font-display text-5xl font-bold leading-tight text-white drop-shadow-md lg:text-[64px] lg:leading-[72px]">
-                  {slide.title}
-                  <br />
-                  <span className="font-normal italic">{slide.italic}</span>
-                </p>
-              )}
-              <p className="hero-desc mb-10 max-w-lg text-lg leading-7 text-white/90 drop-shadow">{slide.desc}</p>
-              <div className="flex w-full flex-col items-center gap-4 sm:w-auto sm:flex-row">
-                <Link
-                  href={slide.primary.href}
-                  prefetch
-                  className="hero-cta w-full rounded-full bg-dadda-primary px-8 py-4 text-center text-sm font-semibold uppercase tracking-wider text-on-primary shadow-lg hover:bg-primary-container hover:text-on-primary-container sm:w-auto"
-                  tabIndex={index === current ? 0 : -1}
-                >
-                  {slide.primary.label}
-                </Link>
-                <Link
-                  href={slide.secondary.href}
-                  prefetch
-                  className="hero-cta w-full rounded-full border border-white/50 bg-white/10 px-8 py-4 text-center text-sm font-semibold uppercase tracking-wider text-white backdrop-blur-sm hover:bg-white/20 sm:w-auto"
-                  tabIndex={index === current ? 0 : -1}
-                >
-                  {slide.secondary.label}
-                </Link>
-              </div>
+          <div key={activeSlide.src} className="hero-copy-slide flex w-full max-w-2xl flex-col items-start">
+            <div className="hero-badge mb-6 inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-4 py-2 shadow-sm backdrop-blur-sm">
+              <Cake className="h-[18px] w-[18px] text-white" />
+              <span className="text-xs font-medium uppercase tracking-widest text-white">{activeSlide.badge}</span>
             </div>
-          ))}
+            {current === 0 ? (
+              <h1 className="hero-title mb-6 font-display text-5xl font-bold leading-tight text-white drop-shadow-md lg:text-[64px] lg:leading-[72px]">
+                {activeSlide.title}
+                <br />
+                <span className="font-normal italic">{activeSlide.italic}</span>
+              </h1>
+            ) : (
+              <p className="hero-title mb-6 font-display text-5xl font-bold leading-tight text-white drop-shadow-md lg:text-[64px] lg:leading-[72px]">
+                {activeSlide.title}
+                <br />
+                <span className="font-normal italic">{activeSlide.italic}</span>
+              </p>
+            )}
+            <p className="hero-desc mb-10 max-w-lg text-lg leading-7 text-white/90 drop-shadow">{activeSlide.desc}</p>
+            <div className="flex w-full flex-col items-center gap-4 sm:w-auto sm:flex-row">
+              <Link
+                href={activeSlide.primary.href}
+                prefetch
+                className="hero-cta w-full rounded-full bg-dadda-primary px-8 py-4 text-center text-sm font-semibold uppercase tracking-wider text-on-primary shadow-lg hover:bg-primary-container hover:text-on-primary-container sm:w-auto"
+              >
+                {activeSlide.primary.label}
+              </Link>
+              <Link
+                href={activeSlide.secondary.href}
+                prefetch
+                className="hero-cta w-full rounded-full border border-white/50 bg-white/10 px-8 py-4 text-center text-sm font-semibold uppercase tracking-wider text-white backdrop-blur-sm hover:bg-white/20 sm:w-auto"
+              >
+                {activeSlide.secondary.label}
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
 
