@@ -20,6 +20,7 @@ type Props = {
     lastName: string
     email: string
     phone: string
+    birthday?: string
   }
   onPrefill: (profile: Pick<AccountProfile, "firstName" | "lastName" | "email" | "phone">) => void
 }

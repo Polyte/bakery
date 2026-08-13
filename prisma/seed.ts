@@ -16,6 +16,7 @@ async function main() {
   await prisma.auditLog.deleteMany()
   await prisma.notification.deleteMany()
   await prisma.communication.deleteMany()
+  await prisma.loyaltyPointTransaction.deleteMany()
   await prisma.wishlistItem.deleteMany()
   await prisma.review.deleteMany()
   await prisma.consultation.deleteMany()
@@ -661,6 +662,41 @@ async function main() {
       maxDiscount: 200,
       isActive: true,
       usageLimit: 100,
+    },
+  })
+
+  await prisma.promotion.create({
+    data: {
+      name: "Birthday treat — 10% off",
+      code: "BIRTHDAY10",
+      type: "percentage",
+      value: 10,
+      maxDiscount: 500,
+      customerSegment: "birthday",
+      isActive: true,
+      usageLimit: null,
+    },
+  })
+
+  await prisma.siteSetting.create({
+    data: {
+      key: "loyalty",
+      value: JSON.stringify({
+        birthdayDiscountPercent: 10,
+        birthdayPromoCode: "BIRTHDAY10",
+        pointsPerRand: {
+          wedding: 0.15,
+          birthday: 0.12,
+          anniversary: 0.12,
+          children: 0.12,
+          corporate: 0.1,
+          cupcakes: 0.08,
+          popsticles: 0.06,
+          scones: 0.05,
+          treats: 0.05,
+        },
+        redeemNote: "Points can be redeemed later for discounts and specials.",
+      }),
     },
   })
 

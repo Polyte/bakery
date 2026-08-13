@@ -39,6 +39,11 @@ import { buildYocoPaymentPageUrl } from "@/lib/yoco-page"
 import DeliveryPicker from "@/components/delivery-picker"
 import { deliveryFeeLabel } from "@/lib/delivery"
 import { notifyOrderEmails } from "@/lib/place-order"
+import {
+  BIRTHDAY_DISCOUNT_PERCENT,
+  BIRTHDAY_PROMO_CODE,
+  loyaltyEarnFromDraft,
+} from "@/lib/loyalty"
 
 const ONLINE_METHODS = [
   {
@@ -89,6 +94,7 @@ export default function CheckoutPage() {
   const goodsSubtotal = cakeAmount + extrasAmount
   const cardFee = messageCardAmount(draft)
   const cartEmpty = !showCake && extras.length === 0
+  const loyaltyPreview = loyaltyEarnFromDraft(draft)
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -231,6 +237,7 @@ export default function CheckoutPage() {
             name={customerName}
             email={draft.customer.email}
             phone={draft.customer.phone}
+            birthday={draft.customer.birthday}
             notes={draft.notes}
             messageCard={draft.messageCard}
             cardMessage={draft.cardMessage}
@@ -240,6 +247,7 @@ export default function CheckoutPage() {
             }}
             onEmailChange={(email) => updateCustomer({ email })}
             onPhoneChange={(phone) => updateCustomer({ phone })}
+            onBirthdayChange={(birthday) => updateCustomer({ birthday })}
             onNotesChange={(notes) => update({ notes })}
             onMessageCardChange={(messageCard) => update({ messageCard })}
             onCardMessageChange={(cardMessage) => update({ cardMessage })}
@@ -442,6 +450,27 @@ export default function CheckoutPage() {
             <span className="font-display text-xl font-semibold text-chocolate-text">Total</span>
             <span className="font-display text-[32px] leading-10 text-dadda-primary">{formatRand(total)}</span>
           </div>
+          {loyaltyPreview.totalPoints > 0 ? (
+            <div className="relative z-10 rounded-lg border border-dadda-primary/20 bg-primary-container/20 px-4 py-3">
+              <p className="text-sm font-semibold text-chocolate-text">
+                You&apos;ll earn ~{loyaltyPreview.totalPoints} loyalty points
+              </p>
+              <p className="mt-1 text-[12px] text-on-surface-variant">
+                Points vary by product category and can be redeemed later for discounts and specials.
+              </p>
+              <ul className="mt-2 space-y-1 text-[12px] text-on-surface-variant">
+                {loyaltyPreview.lines.map((line) => (
+                  <li key={`${line.category}-${line.label}`} className="flex justify-between gap-3">
+                    <span className="truncate">
+                      {line.label}{" "}
+                      <span className="uppercase tracking-wider text-dadda-primary/80">({line.category})</span>
+                    </span>
+                    <span className="shrink-0 font-semibold text-chocolate-text">+{line.points} pts</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
           {draft.paymentMethod === "eft" ? (
             <button
               type="submit"
@@ -474,28 +503,32 @@ function CustomerFields({
   name,
   email,
   phone,
+  birthday,
   notes,
   messageCard,
   cardMessage,
   onNameChange,
   onEmailChange,
   onPhoneChange,
+  onBirthdayChange,
   onNotesChange,
   onMessageCardChange,
   onCardMessageChange,
   onAccountPrefill,
 }: {
   accountRef: React.Ref<CheckoutAccountHandle>
-  customer: { firstName: string; lastName: string; email: string; phone: string }
+  customer: { firstName: string; lastName: string; email: string; phone: string; birthday: string }
   name: string
   email: string
   phone: string
+  birthday: string
   notes: string
   messageCard: boolean
   cardMessage: string
   onNameChange: (value: string) => void
   onEmailChange: (value: string) => void
   onPhoneChange: (value: string) => void
+  onBirthdayChange: (value: string) => void
   onNotesChange: (value: string) => void
   onMessageCardChange: (value: boolean) => void
   onCardMessageChange: (value: string) => void
@@ -542,6 +575,26 @@ function CustomerFields({
           value={phone}
           onChange={(e) => onPhoneChange(e.target.value)}
         />
+      </div>
+      <div className="flex flex-col gap-2 sm:col-span-2">
+        <label className="text-sm font-semibold uppercase tracking-wider text-on-surface-variant" htmlFor="birthday">
+          Birthday <span className="font-medium normal-case tracking-normal">(optional)</span>
+        </label>
+        <input
+          id="birthday"
+          type="date"
+          className="w-full rounded-md bg-surface px-4 py-3 text-on-surface shadow-sm outline-none"
+          value={birthday}
+          onChange={(e) => onBirthdayChange(e.target.value)}
+        />
+        <p className="text-sm text-on-surface-variant">
+          We&apos;ll send a Happy Birthday wish and a{" "}
+          <span className="font-semibold text-chocolate-text">
+            {BIRTHDAY_DISCOUNT_PERCENT}% off
+          </span>{" "}
+          code (<span className="font-semibold text-dadda-primary">{BIRTHDAY_PROMO_CODE}</span>) so you can
+          treat yourself again. We never share your date of birth.
+        </p>
       </div>
       <CheckoutAccount ref={accountRef} customer={customer} onPrefill={onAccountPrefill} />
       <div className="flex flex-col gap-2 sm:col-span-2">

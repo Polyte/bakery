@@ -99,6 +99,8 @@ export type CakeDraft = {
     lastName: string
     email: string
     phone: string
+    /** ISO date YYYY-MM-DD for birthday wishes + annual offer */
+    birthday: string
   }
   paymentMethod: "yoco" | "eft"
   orderNumber: string | null
@@ -132,7 +134,7 @@ export function defaultDraft(): CakeDraft {
     cardMessage: "",
     contactPref: "whatsapp",
     address: "",
-    customer: { firstName: "", lastName: "", email: "", phone: "" },
+    customer: { firstName: "", lastName: "", email: "", phone: "", birthday: "" },
     paymentMethod: "yoco",
     orderNumber: null,
     confirmedAt: null,

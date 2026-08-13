@@ -19,6 +19,8 @@ import {
 } from "@/lib/cake-order"
 import { allocateOrderNumber, createNotification } from "@/lib/admin/domain"
 import { prisma } from "@/lib/db"
+import { loyaltyEarnFromDraft, parseBirthdayInput } from "@/lib/loyalty"
+import { awardLoyaltyPointsForOrder } from "@/lib/loyalty-award"
 
 const STAFF_ROLES: UserRole[] = [
   UserRole.SUPER_ADMIN,
@@ -137,6 +139,9 @@ export async function persistOrderFromDraft(draft: CakeDraft) {
     draft.orderNumber?.trim() ||
     (await allocateOrderNumber())
 
+  const birthday = parseBirthdayInput(draft.customer.birthday)
+  const { lines: loyaltyLines, totalPoints: loyaltyPointsEarned } = loyaltyEarnFromDraft(draft)
+
   const customer = await prisma.customer.upsert({
     where: { email },
     create: {
@@ -144,14 +149,17 @@ export async function persistOrderFromDraft(draft: CakeDraft) {
       firstName,
       lastName,
       phone,
+      birthday: birthday ?? undefined,
       preferredContact: draft.contactPref === "call" ? "call" : "whatsapp",
       orderCount: 1,
       lifetimeSpend: 0,
+      loyaltyPoints: 0,
     },
     update: {
       firstName: firstName || undefined,
       lastName: lastName || undefined,
       phone: phone || undefined,
+      ...(birthday ? { birthday } : {}),
       preferredContact: draft.contactPref === "call" ? "call" : "whatsapp",
       orderCount: { increment: 1 },
     },
@@ -202,6 +210,8 @@ export async function persistOrderFromDraft(draft: CakeDraft) {
         messageCard: draft.messageCard,
         cardMessage: draft.cardMessage,
         contactPref: draft.contactPref,
+        birthday: draft.customer.birthday || null,
+        loyaltyPointsEarned,
       }),
       items: { create: items },
       statusHistory: {
@@ -214,6 +224,15 @@ export async function persistOrderFromDraft(draft: CakeDraft) {
     },
     include: { items: true },
   })
+
+  if (loyaltyPointsEarned > 0) {
+    await awardLoyaltyPointsForOrder({
+      customerId: customer.id,
+      orderId: order.id,
+      orderNumber: order.orderNumber,
+      lines: loyaltyLines,
+    })
+  }
 
   const staff = await prisma.user.findMany({
     where: { isActive: true, role: { in: STAFF_ROLES } },

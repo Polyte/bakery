@@ -25,10 +25,21 @@ type CustomerDetail = {
     whatsapp?: string | null
     company?: string | null
     notes?: string
+    birthday?: string | null
+    loyaltyPoints?: number
     marketingConsent: boolean
     preferredContact: string
     createdAt: string
     tagAssignments?: Array<{ tag: { id: string; name: string; color: string } }>
+    loyaltyLedger?: Array<{
+      id: string
+      points: number
+      balanceAfter: number
+      reason: string
+      category: string
+      note: string
+      createdAt: string
+    }>
     orders: Array<{
       id: string
       orderNumber: string
@@ -44,6 +55,7 @@ type CustomerDetail = {
     lifetimeSpend: number
     totalOrdered: number
     averageOrderValue: number
+    loyaltyPoints?: number
   }
 }
 
@@ -156,11 +168,12 @@ export default function CustomerDetailPage({
         }
       />
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
         <MetricCard title="Orders" value={data.stats.orderCount} />
         <MetricCard title="Lifetime spend" value={formatZAR(data.stats.lifetimeSpend)} />
         <MetricCard title="Ordered total" value={formatZAR(data.stats.totalOrdered)} />
         <MetricCard title="AOV" value={formatZAR(data.stats.averageOrderValue)} />
+        <MetricCard title="Loyalty points" value={data.stats.loyaltyPoints ?? c.loyaltyPoints ?? 0} />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -179,6 +192,14 @@ export default function CustomerDetailPage({
                 {c.phone}
               </p>
             ) : null}
+            <p>
+              <span className="text-muted-foreground">Birthday: </span>
+              {c.birthday ? formatDate(c.birthday) : "—"}
+            </p>
+            <p>
+              <span className="text-muted-foreground">Loyalty points: </span>
+              {c.loyaltyPoints ?? data.stats.loyaltyPoints ?? 0}
+            </p>
             <p>
               <span className="text-muted-foreground">Preferred: </span>
               {c.preferredContact}
@@ -226,6 +247,39 @@ export default function CustomerDetailPage({
               />
             }
           />
+          {(c.loyaltyLedger?.length ?? 0) > 0 ? (
+            <div className="space-y-3 pt-2">
+              <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                Loyalty points history
+              </h2>
+              <ul className="divide-y divide-outline-variant/40 rounded-xl border border-outline-variant/40 bg-cream-surface">
+                {c.loyaltyLedger!.map((row) => (
+                  <li key={row.id} className="flex items-start justify-between gap-3 px-4 py-3 text-sm">
+                    <div className="min-w-0">
+                      <p className="font-medium text-chocolate-text">
+                        {row.reason === "earn_order"
+                          ? "Order earned"
+                          : row.reason === "earn_line"
+                            ? `Category · ${row.category}`
+                            : row.reason}
+                      </p>
+                      <p className="truncate text-muted-foreground">{row.note || formatDate(row.createdAt)}</p>
+                    </div>
+                    <span
+                      className={
+                        row.points >= 0
+                          ? "shrink-0 font-semibold text-emerald-700"
+                          : "shrink-0 font-semibold text-rose-700"
+                      }
+                    >
+                      {row.points >= 0 ? "+" : ""}
+                      {row.points}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
           <Button variant="ghost" size="sm" onClick={() => refetch()}>
             Refresh
           </Button>

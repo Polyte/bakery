@@ -60,14 +60,21 @@ function scrollToTop() {
 
 export default function Footer() {
   const footerRef = useRef<HTMLElement>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
 
   useGSAP(
     () => {
+      const media = videoRef.current
       const mm = gsap.matchMedia()
       mm.add("(prefers-reduced-motion: reduce)", () => {
         gsap.set(".footer-col", { autoAlpha: 1, y: 0 })
+        if (!media) return
+        media.pause()
+        media.removeAttribute("autoplay")
+        media.currentTime = 0
       })
       mm.add("(prefers-reduced-motion: no-preference)", () => {
+        media?.play().catch(() => {})
         gsap.fromTo(
           ".footer-col",
           { y: 16, autoAlpha: 1 },
@@ -87,8 +94,24 @@ export default function Footer() {
 
   return (
     <footer ref={footerRef} className="relative w-full overflow-hidden bg-[#2D241E]">
+      <div className="absolute inset-0 z-0">
+        <video
+          ref={videoRef}
+          className="h-full w-full object-cover"
+          src="/videos/chocolate-fluid.mp4"
+          poster="/videos/chocolate-fluid.jpg"
+          muted
+          loop
+          playsInline
+          autoPlay
+          preload="metadata"
+          aria-hidden="true"
+        />
+        <div className="absolute inset-0 bg-[#1a120c]/50" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_18%,#1a120c_100%)] opacity-55" />
+      </div>
       <FooterDrip />
-      <div className="relative z-10 mx-auto max-w-[1200px] px-margin-mobile pb-8 pt-10 lg:px-margin-desktop lg:pt-12">
+      <div className="relative z-10 mx-auto max-w-[1200px] px-margin-mobile pb-8 pt-28 lg:px-margin-desktop lg:pt-28">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4 lg:gap-12">
           <div className="footer-col space-y-4">
             <Link href="/" className="flex items-center space-x-3">

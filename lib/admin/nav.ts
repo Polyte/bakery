@@ -55,6 +55,7 @@ export const adminNav: NavItem[] = [
     children: [
       { title: "Customers", href: "/admin/customers" },
       { title: "New Customer", href: "/admin/customers/new" },
+      { title: "Birthday offers", href: "/admin/customers/birthdays" },
     ],
   },
   {

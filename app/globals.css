@@ -128,10 +128,8 @@ body {
   }
 }
 
-.footer-choc-blob,
-.footer-choc-swirl-a,
-.footer-choc-swirl-b,
-.footer-choc-sheen {
+.footer-drip-layer,
+.footer-drip-drop {
   will-change: transform;
 }
 

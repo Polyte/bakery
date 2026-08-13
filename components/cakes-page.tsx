@@ -155,7 +155,7 @@ export default function CakesPage() {
       <ParallaxCta
         src="/images/cake-raspberry.webp"
         alt="Chocolate raspberry cake on a stand with a slice in front"
-        headline="The icing is calling."
+        headline="The Chocolate is Calling"
         body="Tell us the date. We bake in Pretoria, finish the morning of collection, and pack for the drive."
         ctaLabel="Order Your Cake"
         ctaHref="/order"

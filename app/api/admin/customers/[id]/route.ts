@@ -30,6 +30,7 @@ export async function GET(_request: Request, { params }: Params) {
         invoices: { orderBy: { createdAt: "desc" }, take: 20 },
         payments: { orderBy: { createdAt: "desc" }, take: 20 },
         communications: { orderBy: { createdAt: "desc" }, take: 20 },
+        loyaltyLedger: { orderBy: { createdAt: "desc" }, take: 40 },
       },
     })
     if (!customer) return NextResponse.json({ error: "Customer not found." }, { status: 404 })
@@ -48,6 +49,7 @@ export async function GET(_request: Request, { params }: Params) {
         lifetimeSpend: customer.lifetimeSpend || paidAgg._sum.amountPaid || 0,
         totalOrdered: paidAgg._sum.total || 0,
         averageOrderValue: paidAgg._avg.total || 0,
+        loyaltyPoints: customer.loyaltyPoints,
       },
     })
   } catch (error) {

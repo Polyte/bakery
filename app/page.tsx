@@ -172,9 +172,10 @@ export default function Home() {
       </section>
 
       <ParallaxCta
-        src="/images/mini-iced-cakes.webp"
-        alt="Mini iced cakes with dripping icing on a dark wooden board"
-        headline="The icing is calling."
+        src="/videos/chocolate-calling.mp4"
+        poster="/videos/chocolate-calling.jpg"
+        alt="Chocolate donut with colorful sprinkles as a looping background"
+        headline="The Chocolate is Calling"
         body="Mini cakes, dripping ganache, and celebration-ready sweetness — baked to order in Pretoria, never off the shelf."
         ctaLabel="Order Now"
         ctaHref="/order"

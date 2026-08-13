@@ -57,6 +57,8 @@ model Customer {
   notes            String   @default("")
   lifetimeSpend    Float    @default(0)
   orderCount       Int      @default(0)
+  loyaltyPoints    Int      @default(0)
+  birthdayOfferSentYear Int?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
@@ -72,6 +74,23 @@ model Customer {
   carts            Cart[]
   communications   Communication[]
   consultations    Consultation[]
+  loyaltyLedger    LoyaltyPointTransaction[]
+}
+
+model LoyaltyPointTransaction {
+  id           String   @id @default(cuid())
+  customerId   String
+  customer     Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  orderId      String?
+  points       Int
+  balanceAfter Int
+  reason       String   // earn_order | redeem | birthday_bonus | adjustment
+  category     String   @default("") // product category that earned points
+  note         String   @default("")
+  createdAt    DateTime @default(now())
+
+  @@index([customerId, createdAt])
+  @@index([orderId])
 }
 
 model CustomerAddress {
@@ -117,6 +136,8 @@ model ProductCategory {
   image       String?
   sortOrder   Int       @default(0)
   isActive    Boolean   @default(true)
+  /// Points earned per R1 spent in this category (overrides default loyalty table when set).
+  loyaltyPointsPerRand Float?
   products    Product[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt

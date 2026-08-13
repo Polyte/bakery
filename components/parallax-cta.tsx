@@ -9,6 +9,7 @@ type Align = "center" | "left" | "right"
 
 type ParallaxCtaProps = {
   src: string
+  poster?: string
   alt: string
   headline: string
   body: string
@@ -23,8 +24,11 @@ type ParallaxCtaProps = {
   priority?: boolean
 }
 
+const isVideoSrc = (src: string) => /\.(mp4|webm)$/i.test(src)
+
 export default function ParallaxCta({
   src,
+  poster,
   alt,
   headline,
   body,
@@ -40,21 +44,30 @@ export default function ParallaxCta({
 }: ParallaxCtaProps) {
   const sectionRef = useRef<HTMLElement>(null)
   const imgRef = useRef<HTMLDivElement>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
   const Heading = headingAs
+  const video = isVideoSrc(src)
 
   useGSAP(
     () => {
       const img = imgRef.current
       const section = sectionRef.current
+      const media = videoRef.current
       if (!img || !section) return
 
       const mm = gsap.matchMedia()
 
       mm.add("(prefers-reduced-motion: reduce)", () => {
         gsap.set(img, { yPercent: 0 })
+        if (!media) return
+        media.pause()
+        media.removeAttribute("autoplay")
+        media.currentTime = 0
       })
 
       mm.add("(prefers-reduced-motion: no-preference)", () => {
+        media?.play().catch(() => {})
+
         gsap.fromTo(
           img,
           { yPercent: -14 },
@@ -101,15 +114,31 @@ export default function ParallaxCta({
     >
       <div className="absolute inset-0 overflow-hidden">
         <div ref={imgRef} className="absolute inset-[-18%] will-change-transform">
-          <LazyImage
-            src={src}
-            alt={alt}
-            fill
-            priority={priority}
-            sizes="100vw"
-            className="object-cover"
-            objectPosition={objectPosition}
-          />
+          {video ? (
+            <video
+              ref={videoRef}
+              className="h-full w-full object-cover"
+              src={src}
+              poster={poster}
+              muted
+              loop
+              playsInline
+              autoPlay
+              preload="metadata"
+              aria-label={alt}
+              style={{ objectPosition }}
+            />
+          ) : (
+            <LazyImage
+              src={src}
+              alt={alt}
+              fill
+              priority={priority}
+              sizes="100vw"
+              className="object-cover"
+              objectPosition={objectPosition}
+            />
+          )}
         </div>
       </div>
       <div className={`pointer-events-none absolute inset-0 ${overlayClass}`} />

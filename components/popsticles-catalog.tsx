@@ -80,6 +80,7 @@ export default function PopsticlesCatalog() {
                       price: item.price,
                       image: item.image,
                       qty: 1,
+                      kind: "Popsticles",
                     })
                   }
                 >
