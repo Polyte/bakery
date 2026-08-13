@@ -269,15 +269,19 @@ export default function Header() {
   return (
     <header
       ref={headerRef}
-      className={`fixed top-0 z-50 w-full transition-[background-color,backdrop-filter,box-shadow,border-color] duration-500 ${
+      className={`fixed top-0 z-50 w-full transition-[background-color,box-shadow] duration-500 ${
         showGlass
-          ? "border-b border-white/40 bg-white/25 shadow-[0_8px_32px_rgba(45,36,30,0.08)] backdrop-blur-xl"
-          : "border-b border-transparent bg-transparent"
+          ? "bg-white/25 shadow-[0_8px_32px_rgba(45,36,30,0.08)]"
+          : "bg-transparent"
       }`}
     >
       <div
         className={`relative z-10 mx-auto flex max-w-[1200px] items-center justify-between px-margin-mobile transition-[height] duration-500 lg:px-margin-desktop ${
           isScrolled ? "h-16" : "h-24"
+        } ${
+          showGlass
+            ? "border-b border-white/40 backdrop-blur-xl"
+            : ""
         }`}
       >
         <Link href="/" prefetch className="flex items-center" aria-label="Dadda's Confectionery home">
