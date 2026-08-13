@@ -21,6 +21,7 @@ import { allocateOrderNumber, createNotification } from "@/lib/admin/domain"
 import { prisma } from "@/lib/db"
 import { loyaltyEarnFromDraft, parseBirthdayInput } from "@/lib/loyalty"
 import { awardLoyaltyPointsForOrder } from "@/lib/loyalty-award"
+import { sanitizeCakeDraft } from "@/lib/order-draft"
 
 const STAFF_ROLES: UserRole[] = [
   UserRole.SUPER_ADMIN,
@@ -121,7 +122,10 @@ function buildOrderItems(draft: CakeDraft): Prisma.OrderItemCreateWithoutOrderIn
   return items
 }
 
-export async function persistOrderFromDraft(draft: CakeDraft) {
+export async function persistOrderFromDraft(raw: CakeDraft) {
+  const draft = sanitizeCakeDraft(raw)
+  if (!draft) throw new Error("Invalid order details.")
+
   const email = draft.customer.email.trim().toLowerCase()
   if (!email) throw new Error("Customer email is required.")
 

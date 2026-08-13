@@ -6,8 +6,17 @@ import {
   sessionCookieOptions,
   signSession,
 } from "@/lib/account"
+import {
+  clientIp,
+  enforceRateLimit,
+  isValidEmail,
+  readJsonBody,
+} from "@/lib/security"
 
 export const runtime = "nodejs"
+
+const MAX_BODY = 8 * 1024
+const MAX_PASSWORD = 128
 
 type Body = {
   email?: string
@@ -18,12 +27,11 @@ type Body = {
 }
 
 export async function POST(request: Request) {
-  let body: Body
-  try {
-    body = (await request.json()) as Body
-  } catch {
-    return NextResponse.json({ error: "Invalid request body." }, { status: 400 })
-  }
+  const limited = await enforceRateLimit(`rl:account:register:${clientIp(request)}`, 5, 15 * 60)
+  if (limited) return limited
+
+  const body = await readJsonBody<Body>(request, MAX_BODY)
+  if (body instanceof NextResponse) return body
 
   const email = body.email?.trim() ?? ""
   const password = body.password ?? ""
@@ -31,13 +39,16 @@ export async function POST(request: Request) {
   const lastName = body.lastName?.trim() ?? ""
   const phone = body.phone?.trim() ?? ""
 
-  if (!email || !email.includes("@")) {
+  if (!isValidEmail(email)) {
     return NextResponse.json({ error: "A valid email is required." }, { status: 400 })
   }
-  if (!firstName) {
+  if (!firstName || firstName.length > 80) {
     return NextResponse.json({ error: "Please add your name." }, { status: 400 })
   }
-  if (password.length < 8) {
+  if (lastName.length > 80 || phone.length > 40) {
+    return NextResponse.json({ error: "Please check your details." }, { status: 400 })
+  }
+  if (password.length < 8 || password.length > MAX_PASSWORD) {
     return NextResponse.json({ error: "Use at least 8 characters for your password." }, { status: 400 })
   }
 
@@ -53,7 +64,7 @@ export async function POST(request: Request) {
         { status: 409 },
       )
     }
-    console.error("Account register failed:", error)
+    console.error("Account register failed")
     return NextResponse.json({ error: "Could not create the account. Please try again." }, { status: 500 })
   }
 }

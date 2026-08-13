@@ -1,7 +1,5 @@
 {
-  "/api/instagram/media/route": "app/api/instagram/media/route.js",
   "/manifest.webmanifest/route": "app/manifest.webmanifest/route.js",
-  "/page": "app/page.js",
-  "/cakes/children/page": "app/cakes/children/page.js",
-  "/_not-found/page": "app/_not-found/page.js"
+  "/_not-found/page": "app/_not-found/page.js",
+  "/page": "app/page.js"
 }

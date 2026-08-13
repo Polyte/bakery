@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server"
-import { type CakeDraft, extrasCount, includeCakeInTotal } from "@/lib/cake-order"
+import { extrasCount, includeCakeInTotal } from "@/lib/cake-order"
+import { sanitizeCakeDraft } from "@/lib/order-draft"
+import { clientIp, enforceRateLimit, readJsonBody } from "@/lib/security"
 import {
   YOCO_MIN_CENTS,
   YocoApiError,
@@ -11,11 +13,16 @@ import {
 
 export const runtime = "nodejs"
 
+const MAX_BODY = 64 * 1024
+
 type Body = {
-  draft?: CakeDraft
+  draft?: unknown
 }
 
 export async function POST(request: Request) {
+  const limited = await enforceRateLimit(`rl:yoco:${clientIp(request)}`, 10, 15 * 60)
+  if (limited) return limited
+
   const secretKey = process.env.YOCO_SECRET_KEY
   if (!secretKey) {
     return NextResponse.json(
@@ -24,14 +31,10 @@ export async function POST(request: Request) {
     )
   }
 
-  let body: Body
-  try {
-    body = (await request.json()) as Body
-  } catch {
-    return NextResponse.json({ error: "Invalid request body." }, { status: 400 })
-  }
+  const body = await readJsonBody<Body>(request, MAX_BODY)
+  if (body instanceof NextResponse) return body
 
-  const draft = body.draft
+  const draft = sanitizeCakeDraft(body.draft)
   if (!draft) {
     return NextResponse.json({ error: "Order details are required." }, { status: 400 })
   }

@@ -9,6 +9,7 @@ import {
   photonLabel,
   type DeliverySuggestion,
 } from "@/lib/delivery"
+import { clientIp, enforceRateLimit } from "@/lib/security"
 
 export const runtime = "nodejs"
 
@@ -100,8 +101,11 @@ async function nominatimGauteng(query: string) {
 }
 
 export async function GET(request: Request) {
+  const limited = await enforceRateLimit(`rl:delivery:ac:${clientIp(request)}`, 30, 60)
+  if (limited) return limited
+
   const { searchParams } = new URL(request.url)
-  const q = (searchParams.get("q") || "").trim()
+  const q = (searchParams.get("q") || "").trim().slice(0, 120)
   if (q.length < 3) {
     return NextResponse.json({ suggestions: [] as DeliverySuggestion[] })
   }

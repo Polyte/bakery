@@ -6,8 +6,12 @@ import {
   authenticateAdmin,
   createAdminToken,
 } from "@/lib/admin/auth"
+import { clientIp, enforceRateLimit, isValidEmail, readJsonBody } from "@/lib/security"
 
 export const runtime = "nodejs"
+
+const MAX_BODY = 8 * 1024
+const MAX_PASSWORD = 128
 
 type Body = {
   email?: string
@@ -15,17 +19,16 @@ type Body = {
 }
 
 export async function POST(request: Request) {
-  let body: Body
-  try {
-    body = (await request.json()) as Body
-  } catch {
-    return NextResponse.json({ error: "Invalid request body." }, { status: 400 })
-  }
+  const limited = await enforceRateLimit(`rl:admin:login:${clientIp(request)}`, 8, 15 * 60)
+  if (limited) return limited
+
+  const body = await readJsonBody<Body>(request, MAX_BODY)
+  if (body instanceof NextResponse) return body
 
   const email = body.email?.trim() ?? ""
   const password = body.password ?? ""
-  if (!email || !password) {
-    return NextResponse.json({ error: "Email and password are required." }, { status: 400 })
+  if (!isValidEmail(email) || !password || password.length > MAX_PASSWORD) {
+    return NextResponse.json({ error: "Invalid credentials." }, { status: 401 })
   }
 
   try {
@@ -37,8 +40,8 @@ export async function POST(request: Request) {
     const jar = await cookies()
     jar.set(ADMIN_COOKIE, token, adminCookieOptions())
     return NextResponse.json({ user })
-  } catch (error) {
-    console.error("Admin login failed:", error)
+  } catch {
+    console.error("Admin login failed")
     return NextResponse.json({ error: "Could not sign in." }, { status: 500 })
   }
 }

@@ -14,10 +14,12 @@ import {
   photonLabel,
   type DeliveryQuote,
 } from "@/lib/delivery"
+import { clientIp, enforceRateLimit, readJsonBody } from "@/lib/security"
 
 export const runtime = "nodejs"
 
 const QUOTE_TTL_SECONDS = 60
+const MAX_BODY = 8 * 1024
 
 function quoteCacheKey(address: string, lat: number | null, lng: number | null) {
   if (lat != null && lng != null) {
@@ -71,13 +73,16 @@ async function drivingKm(lat: number, lng: number) {
 }
 
 export async function POST(request: Request) {
-  const body = (await request.json().catch(() => null)) as
-    | { address?: string; lat?: number; lng?: number }
-    | null
+  const limited = await enforceRateLimit(`rl:delivery:quote:${clientIp(request)}`, 20, 60)
+  if (limited) return limited
 
-  const typedAddress = (body?.address || "").trim()
-  let lat = typeof body?.lat === "number" ? body.lat : null
-  let lng = typeof body?.lng === "number" ? body.lng : null
+  const parsed = await readJsonBody<{ address?: string; lat?: number; lng?: number }>(request, MAX_BODY)
+  if (parsed instanceof NextResponse) return parsed
+  const body = parsed
+
+  const typedAddress = (body?.address || "").trim().slice(0, 200)
+  let lat = typeof body?.lat === "number" && Number.isFinite(body.lat) ? body.lat : null
+  let lng = typeof body?.lng === "number" && Number.isFinite(body.lng) ? body.lng : null
   let address = typedAddress
   const cacheKey = quoteCacheKey(typedAddress, lat, lng)
   const cached = await cacheGetJson<DeliveryQuote>(cacheKey)

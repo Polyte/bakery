@@ -1,8 +1,10 @@
 node_modules
 .env
-.env.local
-.env*.local
+.env.*
+!.env.example
 .data/
+*.pem
+*.key
 
 /generated/prisma
 prisma/*.db

@@ -1,24 +1,27 @@
 import { NextResponse } from "next/server"
-import { type CakeDraft, extrasCount, includeCakeInTotal } from "@/lib/cake-order"
+import { extrasCount, includeCakeInTotal } from "@/lib/cake-order"
 import { adminOrderEmail, customerOrderEmail } from "@/lib/order-email"
 import { ADMIN_EMAIL, mailTransport } from "@/lib/mailer"
 import { persistOrderFromDraft } from "@/lib/orders/persist-draft"
+import { sanitizeCakeDraft } from "@/lib/order-draft"
+import { clientIp, enforceRateLimit, readJsonBody } from "@/lib/security"
 
 export const runtime = "nodejs"
 
+const MAX_BODY = 64 * 1024
+
 type Body = {
-  draft?: CakeDraft
+  draft?: unknown
 }
 
 export async function POST(request: Request) {
-  let body: Body
-  try {
-    body = (await request.json()) as Body
-  } catch {
-    return NextResponse.json({ error: "Invalid request body." }, { status: 400 })
-  }
+  const limited = await enforceRateLimit(`rl:orders:${clientIp(request)}`, 10, 15 * 60)
+  if (limited) return limited
 
-  const draft = body.draft
+  const body = await readJsonBody<Body>(request, MAX_BODY)
+  if (body instanceof NextResponse) return body
+
+  const draft = sanitizeCakeDraft(body.draft)
   if (!draft?.customer?.email) {
     return NextResponse.json({ error: "Customer email is required." }, { status: 400 })
   }

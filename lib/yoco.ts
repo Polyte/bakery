@@ -84,9 +84,12 @@ export function yocoChargeCents(draft: CakeDraft) {
 }
 
 export function requestOrigin(request: Request) {
+  const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/$/, "")
+  if (process.env.NODE_ENV === "production" && configured) return configured
+
   const url = new URL(request.url)
   const proto = request.headers.get("x-forwarded-proto") ?? url.protocol.replace(":", "")
-  const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host") ?? url.host
+  const host = request.headers.get("host") ?? url.host
   return `${proto}://${host}`
 }
 

@@ -81,3 +81,36 @@ export async function cacheSetJson(key: string, value: unknown, ttlSeconds: numb
     // Memory already holds the entry.
   }
 }
+
+const RATE_MEMORY_MAX = 4000
+const rateMemory = new Map<string, { count: number; resetAt: number }>()
+
+function memoryRateLimit(key: string, limit: number, windowSeconds: number) {
+  const now = Date.now()
+  const hit = rateMemory.get(key)
+  if (!hit || hit.resetAt <= now) {
+    if (rateMemory.size >= RATE_MEMORY_MAX) {
+      const oldest = rateMemory.keys().next().value
+      if (oldest) rateMemory.delete(oldest)
+    }
+    rateMemory.set(key, { count: 1, resetAt: now + windowSeconds * 1000 })
+    return true
+  }
+  hit.count += 1
+  return hit.count <= limit
+}
+
+/** Returns true when the request is allowed. */
+export async function rateLimit(key: string, limit: number, windowSeconds: number): Promise<boolean> {
+  const redis = getRedis()
+  if (redis) {
+    try {
+      const n = await redis.incr(key)
+      if (n === 1) await redis.expire(key, windowSeconds)
+      return n <= limit
+    } catch {
+      // Fall through to memory.
+    }
+  }
+  return memoryRateLimit(key, limit, windowSeconds)
+}

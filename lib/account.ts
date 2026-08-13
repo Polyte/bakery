@@ -146,12 +146,18 @@ export async function createUser(input: {
   })
 }
 
+let dummyPasswordHash: string | undefined
+
+async function dummyHash() {
+  dummyPasswordHash ??= await hashPassword("timing-pad")
+  return dummyPasswordHash
+}
+
 export async function authenticateUser(email: string, password: string) {
   const users = await readUsers()
   const user = users.find((entry) => entry.email === normalizeEmail(email))
-  if (!user) return null
-  const ok = await verifyPassword(password, user.passwordHash)
-  return ok ? publicProfile(user) : null
+  const ok = await verifyPassword(password, user?.passwordHash ?? (await dummyHash()))
+  return user && ok ? publicProfile(user) : null
 }
 
 export async function findUserById(id: string) {
